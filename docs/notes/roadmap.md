@@ -10,7 +10,7 @@ created: 2026-01-30
 - [x] Backlinks show snippet context (1–2 lines) under each link
 - [x] Search: show results count
 - [x] Search: highlight matched terms
-- [ ] Keyboard shortcuts cheat sheet (press ?)
+- [x] Keyboard shortcuts cheat sheet (press ?)
 - [x] Improve empty states (helpful tips)
 
 ### Daily Brief
@@ -18,11 +18,11 @@ created: 2026-01-30
 - [ ] 30‑day deltas for markets + crypto (already asked)
 - [x] More compact link labels + source styling
 - [ ] Add “Yesterday vs Today” brief compare view
-- [ ] Brief archive index page
+- [x] Brief archive index page
 
 ### Data / Content
-- [ ] Tag extraction from markdown (#tags)
-- [ ] Add “related docs” based on tags
+- [x] Tag extraction from markdown (#tags)
+- [x] Add “related docs” based on tags
 - [x] Word count + reading time
 - [ ] Show last updated timestamp
 

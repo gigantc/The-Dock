@@ -37,6 +37,21 @@ function parseFrontMatter(raw) {
   return { data, content }
 }
 
+function extractInlineTags(content) {
+  const matches = content.match(/(^|\s)#([a-z0-9_-]+)/gi) || []
+  return matches.map((tag) => tag.replace(/^\s*#/, '').trim())
+}
+
+function uniqueTags(tags) {
+  const seen = new Set()
+  return tags.filter((tag) => {
+    const normalized = tag.toLowerCase()
+    if (seen.has(normalized)) return false
+    seen.add(normalized)
+    return true
+  })
+}
+
 function slugify(text) {
   return String(text ?? '')
     .toLowerCase()
@@ -114,6 +129,10 @@ function buildDocs(modules) {
     const isJournal = path.includes('/docs/journal/')
     const { html, outline } = renderMarkdownWithOutline(content)
 
+    const frontMatterTags = Array.isArray(data?.tags) ? data.tags : []
+    const inlineTags = extractInlineTags(content)
+    const tags = uniqueTags([...frontMatterTags, ...inlineTags])
+
     return {
       path,
       slug,
@@ -122,7 +141,7 @@ function buildDocs(modules) {
       content,
       html,
       outline,
-      tags: Array.isArray(data?.tags) ? data.tags : [],
+      tags,
       isJournal,
     }
   })
@@ -142,6 +161,7 @@ export default function App() {
   const [query, setQuery] = useState('')
   const [activePath, setActivePath] = useState(docs[0]?.path)
   const [activeHeadingId, setActiveHeadingId] = useState(null)
+  const [showShortcuts, setShowShortcuts] = useState(false)
   const searchRef = useRef(null)
 
   const filtered = useMemo(() => {
@@ -182,6 +202,20 @@ export default function App() {
     const minutes = Math.max(1, Math.round(words / 200))
     return { words, minutes }
   }, [activeDoc])
+
+  const relatedDocs = useMemo(() => {
+    if (!activeDoc?.tags?.length) return []
+    const activeTags = new Set(activeDoc.tags.map((tag) => tag.toLowerCase()))
+    return docs
+      .filter((doc) => doc.path !== activeDoc.path)
+      .map((doc) => {
+        const overlap = doc.tags.filter((tag) => activeTags.has(tag.toLowerCase()))
+        return { doc, score: overlap.length, overlap }
+      })
+      .filter((item) => item.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 5)
+  }, [docs, activeDoc])
 
   useEffect(() => {
     if (filtered.length && !filtered.find((doc) => doc.path === activePath)) {
@@ -236,13 +270,21 @@ export default function App() {
         setActivePath(filtered[prevIndex].path)
       }
       if (event.key === 'Escape') {
-        searchRef.current?.blur()
+        if (showShortcuts) {
+          setShowShortcuts(false)
+        } else {
+          searchRef.current?.blur()
+        }
+      }
+
+      if (event.key === '?') {
+        setShowShortcuts((prev) => !prev)
       }
     }
 
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [filtered, activePath])
+  }, [filtered, activePath, showShortcuts])
 
   const grouped = useMemo(() => {
     const journals = filtered.filter((doc) => doc.isJournal)
@@ -252,6 +294,18 @@ export default function App() {
 
   return (
     <div className="app">
+      {showShortcuts && (
+        <div className="modal__backdrop" onClick={() => setShowShortcuts(false)}>
+          <div className="modal" onClick={(event) => event.stopPropagation()}>
+            <div className="modal__title">Keyboard shortcuts</div>
+            <div className="modal__item"><span>/</span> Focus search</div>
+            <div className="modal__item"><span>↑ / ↓</span> Navigate notes</div>
+            <div className="modal__item"><span>Esc</span> Close search / dialog</div>
+            <div className="modal__item"><span>?</span> Toggle this panel</div>
+          </div>
+        </div>
+      )}
+
       <aside className="sidebar">
         <div className="brand">
           <div className="brand__title">Second Brain</div>
@@ -267,7 +321,7 @@ export default function App() {
             onChange={(e) => setQuery(e.target.value)}
           />
           <div className="search__hint">
-            Press / to search · Showing {filtered.length} of {docs.length}
+            Press / to search · Showing {filtered.length} of {docs.length} · Press ? for help
           </div>
         </div>
 
@@ -375,6 +429,27 @@ export default function App() {
             <div className="rightbar__title">Metadata</div>
             <div className="rightbar__item">Words: {docStats.words}</div>
             <div className="rightbar__item">Reading time: {docStats.minutes} min</div>
+          </div>
+
+          <div className="rightbar__section">
+            <div className="rightbar__title">Related</div>
+            {relatedDocs.length ? (
+              relatedDocs.map(({ doc, overlap }) => (
+                <div key={doc.path} className="rightbar__backlink">
+                  <button
+                    className="rightbar__link"
+                    onClick={() => setActivePath(doc.path)}
+                  >
+                    {doc.title}
+                  </button>
+                  <div className="rightbar__snippet">
+                    Tags: {overlap.join(', ')}
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="rightbar__item">No related docs.</div>
+            )}
           </div>
 
           <div className="rightbar__section">
