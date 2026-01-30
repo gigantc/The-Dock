@@ -1,13 +1,45 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import matter from 'gray-matter'
 import { marked } from 'marked'
 import './App.scss'
 
 const docModules = import.meta.glob('../docs/**/*.md', { as: 'raw', eager: true })
 
+function parseFrontMatter(raw) {
+  if (!raw.startsWith('---')) {
+    return { data: {}, content: raw }
+  }
+
+  const end = raw.indexOf('\n---', 3)
+  if (end === -1) {
+    return { data: {}, content: raw }
+  }
+
+  const matterBlock = raw.slice(3, end).trim()
+  const content = raw.slice(end + 4).trimStart()
+  const data = {}
+
+  matterBlock.split('\n').forEach((line) => {
+    const [key, ...rest] = line.split(':')
+    if (!key) return
+    const value = rest.join(':').trim()
+    if (!value) return
+
+    if (key.trim() === 'tags') {
+      const match = value.match(/\[(.*)\]/)
+      data.tags = match
+        ? match[1].split(',').map((tag) => tag.trim()).filter(Boolean)
+        : value.split(',').map((tag) => tag.trim()).filter(Boolean)
+    } else {
+      data[key.trim()] = value.replace(/^"|"$/g, '')
+    }
+  })
+
+  return { data, content }
+}
+
 function buildDocs(modules) {
   return Object.entries(modules).map(([path, raw]) => {
-    const { data, content } = matter(raw)
+    const { data, content } = parseFrontMatter(raw)
     const slug = path
       .replace('../docs/', '')
       .replace(/\.md$/, '')
