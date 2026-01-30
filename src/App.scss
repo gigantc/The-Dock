@@ -194,11 +194,16 @@ body {
 }
 
 .doc__content ul {
-  padding-left: 20px;
+  padding-left: 0;
+  list-style: none;
 }
 
 .doc__content li {
   margin-bottom: 10px;
+}
+
+.doc__content input[type="checkbox"] {
+  margin-right: 8px;
 }
 
 .doc__content a {
