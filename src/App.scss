@@ -210,6 +210,11 @@ body {
   opacity: 0.85;
 }
 
+.doc__content .source {
+  font-size: 11px;
+  display: inline-block;
+}
+
 .doc__content code {
   background: #1a1a1a;
   border: 1px solid var(--border);
