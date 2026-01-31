@@ -34,6 +34,7 @@ created: 2026-01-30
 ### Integrations
 - [ ] Add Claude API key to Clawdbot
 - [ ] Add Gemini API key to Clawdbot
+- [ ] Add Brave API key for web search
 
 ### Quality / Polish
 - [ ] Light mode toggle (optional)
