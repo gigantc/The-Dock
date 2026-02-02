@@ -443,6 +443,12 @@ body {
   word-break: break-word;
 }
 
+.sidebar__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .primary-button {
   width: 100%;
   padding: 8px 10px;
@@ -453,6 +459,17 @@ body {
   color: #fff;
   font-size: 12px;
   font-weight: 500;
+}
+
+.primary-button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.primary-button--ghost {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
 }
 
 .doc__actions {

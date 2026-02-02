@@ -13,6 +13,7 @@ import {
   addDoc,
   doc,
   updateDoc,
+  setDoc,
   deleteDoc,
   onSnapshot,
   orderBy,
@@ -137,6 +138,25 @@ function formatDate(value) {
   return date.toISOString().slice(0, 10)
 }
 
+function hashString(value) {
+  let hash = 0
+  for (let i = 0; i < value.length; i += 1) {
+    hash = (hash << 5) - hash + value.charCodeAt(i)
+    hash |= 0
+  }
+  return Math.abs(hash).toString(36)
+}
+
+function parseDocDate(value) {
+  if (!value) return null
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return new Date(`${value}T00:00:00`)
+  }
+  const parsed = new Date(value)
+  if (Number.isNaN(parsed.getTime())) return null
+  return parsed
+}
+
 function renderMarkdownWithOutline(content) {
   const renderer = new marked.Renderer()
   const outline = []
@@ -209,7 +229,16 @@ function sortDocs(docs) {
 export default function App() {
   const localDocs = useMemo(() => sortDocs(buildDocs(docModules)), [])
   const [firestoreDocs, setFirestoreDocs] = useState([])
-  const docs = useMemo(() => sortDocs([...localDocs, ...firestoreDocs]), [localDocs, firestoreDocs])
+  const hasFirestoreNotes = firestoreDocs.some((doc) => !doc.isJournal && !doc.isBrief)
+  const hasFirestoreJournals = firestoreDocs.some((doc) => doc.isJournal)
+  const hasFirestoreBriefs = firestoreDocs.some((doc) => doc.isBrief)
+  const visibleLocalDocs = useMemo(() => localDocs.filter((doc) => {
+    if (doc.isBrief && hasFirestoreBriefs) return false
+    if (doc.isJournal && hasFirestoreJournals) return false
+    if (!doc.isJournal && !doc.isBrief && doc.path.includes('/docs/notes/') && hasFirestoreNotes) return false
+    return true
+  }), [localDocs, hasFirestoreNotes, hasFirestoreJournals, hasFirestoreBriefs])
+  const docs = useMemo(() => sortDocs([...visibleLocalDocs, ...firestoreDocs]), [visibleLocalDocs, firestoreDocs])
   const [query, setQuery] = useState('')
   const [activePath, setActivePath] = useState(docs[0]?.path)
   const [activeHeadingId, setActiveHeadingId] = useState(null)
@@ -225,6 +254,7 @@ export default function App() {
   const [editorContent, setEditorContent] = useState('')
   const [editorTags, setEditorTags] = useState('')
   const [editorSaving, setEditorSaving] = useState(false)
+  const [importing, setImporting] = useState(false)
   const notesRef = useRef(null)
   const journalRef = useRef(null)
   const briefsRef = useRef(null)
@@ -253,10 +283,13 @@ export default function App() {
         const frontTags = Array.isArray(data.tags) ? data.tags : []
         const inlineTags = extractInlineTags(content)
         const tags = uniqueTags([...frontTags, ...inlineTags])
+        const type = data.type || 'note'
+        const isJournal = type === 'journal'
+        const isBrief = type === 'brief'
 
         return {
-          path: `firestore:notes/${snap.id}`,
-          slug: `notes / ${title}`,
+          path: `firestore:${type}/${snap.id}`,
+          slug: `${type} / ${title}`,
           title,
           created,
           updated,
@@ -265,8 +298,8 @@ export default function App() {
           outline,
           tags,
           rawTags: frontTags,
-          isJournal: false,
-          isBrief: false,
+          isJournal,
+          isBrief,
           source: 'firestore',
           id: snap.id,
         }
@@ -341,6 +374,7 @@ export default function App() {
           title: editorTitle.trim() || 'Untitled',
           content: editorContent,
           tags,
+          type: 'note',
           createdAt: serverTimestamp(),
           updatedAt: serverTimestamp(),
         })
@@ -363,6 +397,38 @@ export default function App() {
     setEditorTitle('')
     setEditorContent('')
     setEditorTags('')
+  }
+
+  const handleImportLocalDocs = async () => {
+    if (!user) return
+    setImporting(true)
+
+    const candidates = localDocs.filter((doc) => {
+      if (doc.path.endsWith('README.md')) return false
+      if (doc.path.includes('/docs/briefs/')) return true
+      if (doc.path.includes('/docs/journal/')) return true
+      if (doc.path.includes('/docs/notes/')) return true
+      return false
+    })
+
+    try {
+      for (const docItem of candidates) {
+        const type = docItem.isBrief ? 'brief' : docItem.isJournal ? 'journal' : 'note'
+        const sourcePath = docItem.path
+        const docId = `import-${hashString(sourcePath)}`
+        await setDoc(doc(db, 'notes', docId), {
+          title: docItem.title || 'Untitled',
+          content: docItem.content || '',
+          tags: docItem.tags || [],
+          type,
+          sourcePath,
+          createdAt: parseDocDate(docItem.created) || serverTimestamp(),
+          updatedAt: parseDocDate(docItem.updated) || parseDocDate(docItem.created) || serverTimestamp(),
+        })
+      }
+    } finally {
+      setImporting(false)
+    }
   }
 
   const filtered = useMemo(() => {
@@ -649,9 +715,14 @@ export default function App() {
         </div>
 
         {user && (
-          <button className="primary-button" onClick={() => openEditor()}>
-            New Note
-          </button>
+          <div className="sidebar__actions">
+            <button className="primary-button" onClick={() => openEditor()}>
+              New Note
+            </button>
+            <button className="primary-button primary-button--ghost" onClick={handleImportLocalDocs} disabled={importing}>
+              {importing ? 'Importing…' : 'Import local docs'}
+            </button>
+          </div>
         )}
 
         <div className="search">
