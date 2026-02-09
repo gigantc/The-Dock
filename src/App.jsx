@@ -1431,41 +1431,42 @@ export default function App() {
         ) : activeDoc ? (
           <article className="doc">
             <header className="doc__header">
-              <h1>{briefGreeting || activeDoc.title}</h1>
-              {activeDoc.isBrief && (
-                <div className="doc__date">{activeDoc.title}</div>
-              )}
-              {!activeDoc.isBrief && activeDoc.created && (
-                <div className="doc__date">{activeDoc.created}</div>
-              )}
-              {activeDoc.tags.length > 0 && (
-                <div className="doc__tags">
-                  {activeDoc.tags.map((tag) => (
-                    <span key={tag} className="tag">{tag}</span>
-                  ))}
-                </div>
-              )}
-              {user && activeDoc.source === 'firestore' && !activeDoc.isBrief && (
-                <div className="doc__actions">
-                  <button className="doc__button" onClick={() => openEditor(activeDoc)}>
-                    Edit Note
-                  </button>
-                </div>
-              )}
+              <div className="doc__title">
+                <h1>{briefGreeting || activeDoc.title}</h1>
+                {activeDoc.isBrief && (
+                  <div className="doc__date">{activeDoc.title}</div>
+                )}
+                {!activeDoc.isBrief && activeDoc.created && (
+                  <div className="doc__date">{activeDoc.created}</div>
+                )}
+                {activeDoc.tags.length > 0 && (
+                  <div className="doc__tags">
+                    {activeDoc.tags.map((tag) => (
+                      <span key={tag} className="tag">{tag}</span>
+                    ))}
+                  </div>
+                )}
+                {user && activeDoc.source === 'firestore' && !activeDoc.isBrief && (
+                  <div className="doc__actions">
+                    <button className="doc__button" onClick={() => openEditor(activeDoc)}>
+                      Edit Note
+                    </button>
+                  </div>
+                )}
+              </div>
               {user && activeDoc.source === 'firestore' && activeDoc.isBrief && (
-                <div className="doc__actions">
-                  <button
-                    className="doc__button"
-                    onClick={() => openConfirmDialog({
-                      title: 'Delete brief?',
-                      body: <>Delete <strong>{activeDoc.title}</strong>? This cannot be undone.</>,
-                      confirmLabel: 'Delete Brief',
-                      onConfirm: () => handleDeleteBrief(activeDoc),
-                    })}
-                  >
-                    Delete Brief
-                  </button>
-                </div>
+                <button
+                  className="list__delete"
+                  type="button"
+                  onClick={() => openConfirmDialog({
+                    title: 'Delete brief?',
+                    body: <>Delete <strong>{activeDoc.title}</strong>? This cannot be undone.</>,
+                    confirmLabel: 'Delete Brief',
+                    onConfirm: () => handleDeleteBrief(activeDoc),
+                  })}
+                >
+                  Delete Brief
+                </button>
               )}
             </header>
             <div
