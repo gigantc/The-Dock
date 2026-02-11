@@ -5,8 +5,8 @@ export default function AppHeader({ user, onNewNote, onNewList }) {
   return (
     <header className="app-header">
       <div className="brand">
-        <div className="brand__title">Docky</div>
-        <div className="brand__subtitle">The Dock · dFree × Rocky</div>
+        <div className="brand__title">The Dock</div>
+        <div className="brand__subtitle">dFree × Apollo</div>
       </div>
 
       <div className="app-header__actions">
