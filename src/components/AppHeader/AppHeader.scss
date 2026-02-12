@@ -5,6 +5,7 @@
   grid-area: header;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 16px;
   flex-wrap: nowrap;
   padding: 12px 20px;
@@ -41,7 +42,10 @@
 
 @media (max-width: 900px) {
   .app-header {
-    padding: 10px 14px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: max(14px, env(safe-area-inset-left));
+    padding-right: max(14px, env(safe-area-inset-right));
   }
 
   .brand__subtitle {
