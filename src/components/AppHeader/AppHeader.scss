@@ -48,6 +48,10 @@
     padding-right: max(14px, env(safe-area-inset-right));
   }
 
+  .brand__title {
+    font-size: 18px;
+  }
+
   .brand__subtitle {
     display: none;
   }
