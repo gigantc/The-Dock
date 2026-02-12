@@ -45,8 +45,8 @@
   padding: 10px 16px;
   border-radius: v.$radius-pill;
   border: none;
-  background: rgba(v.$green-light, 0.15);
-  color: v.$green-light;
+  background: rgba(var(--accent-light-rgb), 0.15);
+  color: var(--accent-light);
   font-size: v.$fs-sm;
   font-weight: v.$fw-bold;
   cursor: pointer;
@@ -63,14 +63,14 @@
 .icon-button:focus,
 .icon-button:focus-visible {
   outline: none;
-  box-shadow: v.$ring-soft;
+  box-shadow: var(--ring-soft);
 }
 
 .icon-button--primary {
-  background: v.$green;
+  background: var(--accent);
   color: v.$white;
 }
 
 .icon-button--primary:hover {
-  background: rgba(v.$green, 0.85);
+  background: rgba(var(--accent-rgb), 0.85);
 }

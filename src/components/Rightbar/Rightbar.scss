@@ -72,7 +72,7 @@
   &:focus,
   &:focus-visible {
     outline: none;
-    box-shadow: v.$ring-soft;
+    box-shadow: var(--ring-soft);
   }
 }
 
@@ -109,12 +109,12 @@
   }
 
   &.is-active {
-    background: rgba(v.$green-light, 0.14);
+    background: rgba(var(--accent-light-rgb), 0.14);
   }
 
   &:focus,
   &:focus-visible {
     outline: none;
-    box-shadow: v.$ring-soft;
+    box-shadow: var(--ring-soft);
   }
 }

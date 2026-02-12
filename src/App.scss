@@ -42,7 +42,7 @@
   border-radius: v.$radius-pill;
   border: none;
   cursor: pointer;
-  background: v.$green;
+  background: var(--accent);
   color: v.$white;
   font-size: v.$fs-base;
   font-weight: v.$fw-bold;
@@ -59,7 +59,7 @@
 .modal__button--ghost {
   background: transparent;
   border: none;
-  color: v.$green-light;
+  color: var(--accent-light);
   box-shadow: none;
   padding: 10px 12px;
 }

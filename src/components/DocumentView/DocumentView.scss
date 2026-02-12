@@ -55,7 +55,7 @@
   &:focus,
   &:focus-visible {
     outline: none;
-    box-shadow: v.$ring-soft;
+    box-shadow: var(--ring-soft);
   }
 }
 
@@ -99,13 +99,13 @@
 
 .doc__content input[type="checkbox"] {
   margin-right: 8px;
-  accent-color: v.$green-light;
+  accent-color: var(--accent-light);
 }
 
 .doc__content a {
-  color: v.$green-light;
+  color: var(--accent-light);
   text-decoration: none;
-  border-bottom: 1px solid rgba(v.$green-light, 0.4);
+  border-bottom: 1px solid rgba(var(--accent-light-rgb), 0.4);
 
   &:hover {
     opacity: 0.85;

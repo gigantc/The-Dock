@@ -51,11 +51,17 @@ export default function App() {
   const [listSaving, setListSaving] = useState(false)
   const [activeListId, setActiveListId] = useState(null)
   const [confirmDialog, setConfirmDialog] = useState(null)
+  const [theme, setTheme] = useState(() => localStorage.getItem('dock.theme') || 'green')
   const searchRef = useRef(null)
 
   useEffect(() => onAuthStateChanged(auth, (nextUser) => {
     setUser(nextUser)
   }), [])
+
+  useEffect(() => {
+    document.body.setAttribute('data-theme', theme)
+    localStorage.setItem('dock.theme', theme)
+  }, [theme])
 
   useEffect(() => {
     if (!user) {
@@ -579,6 +585,8 @@ export default function App() {
         user={user}
         onNewNote={() => openEditor()}
         onNewList={() => setShowListModal(true)}
+        theme={theme}
+        onThemeChange={setTheme}
       />
 
       <Sidebar

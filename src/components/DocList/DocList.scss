@@ -22,7 +22,7 @@
   color: v.$white;
   padding: 8px 10px;
   font-weight: 540;
-  background: v.$heading-gradient;
+  background: linear-gradient(135deg, rgba(var(--accent-rgb), 0.9), rgba(var(--accent-rgb), 0.82));
   border-radius: v.$radius-m;
   box-shadow: v.$elevation-1;
 }
@@ -43,7 +43,7 @@
   &:focus,
   &:focus-visible {
     outline: none;
-    box-shadow: v.$ring-soft;
+    box-shadow: var(--ring-soft);
   }
 }
 
@@ -83,12 +83,12 @@
   &:focus-visible,
   &:active {
     outline: none;
-    box-shadow: v.$ring-soft;
+    box-shadow: var(--ring-soft);
   }
 
   &.is-active {
-    background: rgba(v.$green-light, 0.14);
-    border: 1px solid rgba(v.$green-light, 0.25);
+    background: rgba(var(--accent-light-rgb), 0.14);
+    border: 1px solid rgba(var(--accent-light-rgb), 0.25);
     outline: none;
     box-shadow: none;
   }

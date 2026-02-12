@@ -60,14 +60,14 @@
   &:focus,
   &:focus-visible {
     outline: none;
-    box-shadow: v.$ring-soft;
+    box-shadow: var(--ring-soft);
   }
 }
 
 // M3 text button (cancel)
 .list__rename-cancel {
   border: none;
-  color: v.$green-light;
+  color: var(--accent-light);
   padding: 10px 12px;
 }
 
@@ -109,7 +109,7 @@
   border-radius: v.$radius-pill;
   border: none;
   cursor: pointer;
-  background: v.$green;
+  background: var(--accent);
   color: v.$white;
   font-size: v.$fs-base;
   font-weight: v.$fw-bold;
@@ -152,7 +152,7 @@
 .list-item__swipe {
   position: absolute;
   inset: 0;
-  background: v.$swipe-gradient;
+  background: linear-gradient(90deg, transparent 0%, rgba(var(--accent-rgb), 0.3) 35%, rgba(var(--accent-rgb), 0.55) 50%, rgba(var(--accent-rgb), 0.3) 65%, transparent 100%);
   pointer-events: none;
   transform: translateX(-120%);
   opacity: 0;
@@ -192,8 +192,8 @@
 }
 
 .list-item.is-completing .list-item__checkbox {
-  background: v.$green;
-  border-color: rgba(v.$green, 0.6);
+  background: var(--accent);
+  border-color: rgba(var(--accent-rgb), 0.6);
 }
 
 .list-item.is-completing .list-item__check {
@@ -215,7 +215,7 @@
   &:focus,
   &:focus-visible {
     outline: none;
-    box-shadow: v.$ring-soft;
+    box-shadow: var(--ring-soft);
   }
 }
 
@@ -230,8 +230,8 @@
 }
 
 .list-item.is-complete .list-item__checkbox {
-  background: v.$green;
-  border-color: rgba(v.$green, 0.6);
+  background: var(--accent);
+  border-color: rgba(var(--accent-rgb), 0.6);
 }
 
 .list-item.is-complete .list-item__check {

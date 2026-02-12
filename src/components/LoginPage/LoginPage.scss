@@ -49,7 +49,7 @@
   border-radius: v.$radius-pill;
   border: none;
   cursor: pointer;
-  background: v.$green;
+  background: var(--accent);
   color: v.$white;
   font-size: v.$fs-sm;
   font-weight: v.$fw-bold;
@@ -63,7 +63,7 @@
 
 .login-card__button--ghost {
   background: transparent;
-  color: v.$green-light;
+  color: var(--accent-light);
 }
 
 .login-card__error {

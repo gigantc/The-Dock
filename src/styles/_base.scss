@@ -2,6 +2,53 @@
 
 :root {
   color-scheme: dark;
+  --accent: #0a5c36;
+  --accent-light: #6fdc9a;
+  --accent-rgb: 10, 92, 54;
+  --accent-light-rgb: 111, 220, 154;
+  --ring-soft: 0 0 0 3px rgba(var(--accent-light-rgb), 0.3);
+}
+
+body[data-theme='blue'] {
+  --accent: #3b82f6;
+  --accent-light: #7cc4ff;
+  --accent-rgb: 59, 130, 246;
+  --accent-light-rgb: 124, 196, 255;
+}
+
+body[data-theme='pink'] {
+  --accent: #ec4899;
+  --accent-light: #f9a8d4;
+  --accent-rgb: 236, 72, 153;
+  --accent-light-rgb: 249, 168, 212;
+}
+
+body[data-theme='red'] {
+  --accent: #ef4444;
+  --accent-light: #fca5a5;
+  --accent-rgb: 239, 68, 68;
+  --accent-light-rgb: 252, 165, 165;
+}
+
+body[data-theme='gold'] {
+  --accent: #d4a017;
+  --accent-light: #f6d36b;
+  --accent-rgb: 212, 160, 23;
+  --accent-light-rgb: 246, 211, 107;
+}
+
+body[data-theme='teal'] {
+  --accent: #14b8a6;
+  --accent-light: #5eead4;
+  --accent-rgb: 20, 184, 166;
+  --accent-light-rgb: 94, 234, 212;
+}
+
+body[data-theme='green'] {
+  --accent: #0a5c36;
+  --accent-light: #6fdc9a;
+  --accent-rgb: 10, 92, 54;
+  --accent-light-rgb: 111, 220, 154;
 }
 
 * {
@@ -9,7 +56,7 @@
 }
 
 *::selection {
-  background: rgba(v.$green, 0.35);
+  background: rgba(var(--accent-rgb), 0.35);
   color: v.$white;
 }
 
@@ -18,12 +65,14 @@ body {
   font-family: v.$font-stack;
   font-weight: v.$fw-normal;
   font-size: v.$fs-base;
-  background: v.$gradient-bg, v.$black;
+  background:
+    radial-gradient(circle at top, rgba(var(--accent-rgb), 0.14), transparent 45%),
+    v.$black;
   color: v.$white;
 }
 
 .highlight {
-  background: rgba(v.$green-light, 0.15);
+  background: rgba(var(--accent-light-rgb), 0.15);
   color: v.$white;
   padding: 0 3px;
   border-radius: 6px;

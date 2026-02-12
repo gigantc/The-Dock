@@ -10,18 +10,18 @@
   padding: 0;
 }
 
-// M3 surface tinting — overlays $green-light at varying alpha on $black
+// M3 surface tinting — overlays accent light at varying alpha on black
 @mixin surface-tint($level) {
   background-color: v.$black;
 
   @if $level == 1 {
-    background-image: linear-gradient(rgba(v.$green-light, 0.05), rgba(v.$green-light, 0.05));
+    background-image: linear-gradient(rgba(var(--accent-light-rgb), 0.05), rgba(var(--accent-light-rgb), 0.05));
   } @else if $level == 2 {
-    background-image: linear-gradient(rgba(v.$green-light, 0.08), rgba(v.$green-light, 0.08));
+    background-image: linear-gradient(rgba(var(--accent-light-rgb), 0.08), rgba(var(--accent-light-rgb), 0.08));
   } @else if $level == 3 {
-    background-image: linear-gradient(rgba(v.$green-light, 0.11), rgba(v.$green-light, 0.11));
+    background-image: linear-gradient(rgba(var(--accent-light-rgb), 0.11), rgba(var(--accent-light-rgb), 0.11));
   } @else if $level == 4 {
-    background-image: linear-gradient(rgba(v.$green-light, 0.14), rgba(v.$green-light, 0.14));
+    background-image: linear-gradient(rgba(var(--accent-light-rgb), 0.14), rgba(var(--accent-light-rgb), 0.14));
   }
 }
 
@@ -57,7 +57,7 @@
   &:focus,
   &:focus-visible {
     outline: none;
-    box-shadow: v.$ring-soft;
+    box-shadow: var(--ring-soft);
   }
 }
 
@@ -75,7 +75,7 @@
   transition: border-color v.$transition-normal, background v.$transition-normal;
 
   &:focus {
-    border-bottom-color: v.$green-light;
+    border-bottom-color: var(--accent-light);
     background: rgba(v.$white, 0.08);
   }
 }
