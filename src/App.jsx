@@ -54,7 +54,10 @@ export default function App() {
   const [activeListId, setActiveListId] = useState(null)
   const [confirmDialog, setConfirmDialog] = useState(null)
   const [theme, setTheme] = useState(() => localStorage.getItem('dock.theme') || 'green')
-  const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [sidebarOpen, setSidebarOpen] = useState(() => {
+    if (typeof window === 'undefined') return true
+    return window.innerWidth > 900
+  })
   const appRef = useRef(null)
   const searchRef = useRef(null)
 
