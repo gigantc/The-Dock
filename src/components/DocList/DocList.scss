@@ -112,15 +112,15 @@
 
 @media (max-width: 900px) {
   .doc-list__heading {
-    font-size: 11px;
+    font-size: var(--type-meta);
     letter-spacing: 0.1em;
   }
 
   .doc-list__title {
-    font-size: 13px;
+    font-size: var(--type-body);
   }
 
   .doc-list__meta {
-    font-size: 11px;
+    font-size: var(--type-meta);
   }
 }

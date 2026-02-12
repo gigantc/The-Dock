@@ -20,7 +20,7 @@
 
 @media (max-width: 900px) {
   .search__hint {
-    font-size: 11px;
+    font-size: var(--type-meta);
     line-height: 1.25;
   }
 }
