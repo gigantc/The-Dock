@@ -17,12 +17,14 @@
   display: flex;
   align-items: center;
   margin-left: auto;
+  flex-shrink: 0;
 }
 
 .brand {
   display: flex;
   align-items: center;
   gap: 10px;
+  min-width: 0;
 }
 
 .brand__title {
@@ -40,5 +42,9 @@
 @media (max-width: 900px) {
   .app-header {
     padding: 10px 14px;
+  }
+
+  .brand__subtitle {
+    display: none;
   }
 }

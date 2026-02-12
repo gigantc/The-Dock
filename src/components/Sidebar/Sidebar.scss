@@ -20,6 +20,7 @@
   align-items: flex-start;
   min-height: 34px;
   gap: 8px;
+  position: relative;
 }
 
 .sidebar__actions {
@@ -30,6 +31,7 @@
 
 .sidebar__actions--row {
   flex-direction: row;
+  padding-right: 42px;
 }
 
 .sidebar__actions--col {
@@ -41,8 +43,8 @@
   width: 34px;
   height: 34px;
   border-radius: 10px;
-  border: 1px solid rgba(v.$white, 0.16);
-  background: rgba(v.$white, 0.02);
+  border: none;
+  background: transparent;
   color: v.$white;
   display: inline-flex;
   align-items: center;
@@ -51,10 +53,21 @@
   flex: 0 0 34px;
 }
 
+.sidebar__action-btn:hover,
+.sidebar__toggle:hover {
+  background: rgba(v.$white, 0.08);
+}
+
 .sidebar__action-btn--primary {
-  background: var(--accent);
   color: v.$white;
-  border-color: transparent;
+}
+
+.sidebar__toggle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  border: 1px solid rgba(v.$white, 0.18);
+  background: rgba(v.$white, 0.03);
 }
 
 .sidebar__content {
@@ -68,6 +81,15 @@
 .sidebar--collapsed {
   padding-left: 10px;
   padding-right: 10px;
+}
+
+.sidebar--collapsed .sidebar__top {
+  min-height: 116px;
+}
+
+.sidebar--collapsed .sidebar__actions {
+  margin-top: 42px;
+  align-items: center;
 }
 
 .sidebar__search {
