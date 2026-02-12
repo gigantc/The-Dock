@@ -16,13 +16,7 @@
 .app-header__actions {
   display: flex;
   align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
   margin-left: auto;
-}
-
-.app-header .primary-button {
-  width: auto;
 }
 
 .brand {
@@ -43,62 +37,8 @@
   font-weight: 380;
 }
 
-// M3 tonal button (New Note, New List)
-.icon-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 10px 16px;
-  border-radius: v.$radius-pill;
-  border: none;
-  background: rgba(var(--accent-light-rgb), 0.15);
-  color: var(--accent-light);
-  font-size: v.$fs-sm;
-  font-weight: v.$fw-bold;
-  cursor: pointer;
-  transition: v.$transition-fast;
-  @include m.state-layer;
-}
-
-.icon-button svg {
-  width: 16px;
-  height: 16px;
-  fill: none;
-  stroke: currentColor;
-}
-
-.icon-button:focus,
-.icon-button:focus-visible {
-  outline: none;
-  box-shadow: var(--ring-soft);
-}
-
-.icon-button--primary {
-  background: var(--accent);
-  color: v.$white;
-}
-
-.icon-button--primary:hover {
-  background: rgba(var(--accent-rgb), 0.85);
-}
-
-.icon-button--nav {
-  padding: 8px;
-  background: transparent;
-  border: 1px solid rgba(v.$white, 0.12);
-  color: v.$white;
-}
-
 @media (max-width: 900px) {
   .app-header {
     padding: 10px 14px;
-  }
-
-  .icon-button {
-    padding: 8px 12px;
-  }
-
-  .icon-button--nav {
-    padding: 8px;
   }
 }

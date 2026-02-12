@@ -1,6 +1,6 @@
 import { forwardRef, useLayoutEffect, useRef } from 'react'
 import { gsap } from 'gsap'
-import { PanelLeft, PanelLeftClose } from 'lucide-react'
+import { FilePlus2, ListTodo, PanelLeft, PanelLeftClose } from 'lucide-react'
 import SearchBar from '../SearchBar/SearchBar'
 import DocList from '../DocList/DocList'
 import './Sidebar.scss'
@@ -20,8 +20,11 @@ const Sidebar = forwardRef(function Sidebar({
   onSelectList,
   sidebarOpen,
   onToggleSidebar,
+  onNewNote,
+  onNewList,
 }, searchRef) {
   const contentRef = useRef(null)
+  const actionsRef = useRef(null)
 
   useLayoutEffect(() => {
     const content = contentRef.current
@@ -49,9 +52,57 @@ const Sidebar = forwardRef(function Sidebar({
     })
   }, [sidebarOpen])
 
+  useLayoutEffect(() => {
+    const actions = actionsRef.current
+    if (!actions) return
+    const buttons = actions.querySelectorAll('.sidebar__action-btn')
+
+    gsap.killTweensOf(buttons)
+    gsap.fromTo(
+      buttons,
+      {
+        x: sidebarOpen ? -10 : 0,
+        y: sidebarOpen ? 0 : -8,
+        opacity: 0.75,
+      },
+      {
+        x: 0,
+        y: 0,
+        opacity: 1,
+        duration: 0.22,
+        ease: 'power2.out',
+        stagger: 0.03,
+      },
+    )
+  }, [sidebarOpen])
+
   return (
     <aside className={`sidebar ${sidebarOpen ? 'sidebar--open' : 'sidebar--collapsed'}`}>
       <div className="sidebar__top">
+        <div
+          className={`sidebar__actions ${sidebarOpen ? 'sidebar__actions--row' : 'sidebar__actions--col'}`}
+          ref={actionsRef}
+        >
+          <button
+            className="sidebar__action-btn sidebar__action-btn--primary"
+            type="button"
+            onClick={onNewNote}
+            aria-label="New note"
+            title="New note"
+          >
+            <FilePlus2 aria-hidden="true" size={16} strokeWidth={2} />
+          </button>
+          <button
+            className="sidebar__action-btn"
+            type="button"
+            onClick={onNewList}
+            aria-label="New list"
+            title="New list"
+          >
+            <ListTodo aria-hidden="true" size={16} strokeWidth={2} />
+          </button>
+        </div>
+
         <button
           className="sidebar__toggle"
           type="button"

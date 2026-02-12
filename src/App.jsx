@@ -600,8 +600,6 @@ export default function App() {
 
       <AppHeader
         user={user}
-        onNewNote={() => openEditor()}
-        onNewList={() => setShowListModal(true)}
         theme={theme}
         onThemeChange={setTheme}
         version={APP_VERSION}
@@ -621,6 +619,8 @@ export default function App() {
         activeListId={activeListId}
         sidebarOpen={sidebarOpen}
         onToggleSidebar={() => setSidebarOpen((prev) => !prev)}
+        onNewNote={() => openEditor()}
+        onNewList={() => setShowListModal(true)}
         onSelectDoc={(path) => {
           setActivePath(path)
           setActiveListId(null)
