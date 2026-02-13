@@ -27,7 +27,7 @@
 
 .doc__date {
   color: v.$muted;
-  font-size: v.$fs-sm;
+  font-size: var(--type-meta);
   margin-bottom: 8px;
 }
 
@@ -36,138 +36,6 @@
   gap: 6px;
   flex-wrap: wrap;
 }
-
-.doc__actions {
-  margin-top: 12px;
-}
-
-// M3 outlined button
-.doc__button {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 10px 12px;
-  border-radius: v.$radius-pill;
-  border: 1px solid rgba(v.$white, 0.12);
-  background: transparent;
-  color: v.$white;
-  font-size: v.$fs-sm;
-  cursor: pointer;
-  @include m.state-layer;
-
-  &:focus,
-  &:focus-visible {
-    outline: none;
-    box-shadow: var(--ring-soft);
-  }
-}
-
-// M3 danger outlined button
-.doc__brief-delete {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  border: 1px solid rgba(v.$danger, 0.45);
-  background: transparent;
-  color: v.$danger;
-  padding: 10px 12px;
-  border-radius: v.$radius-pill;
-  font-size: v.$fs-sm;
-  cursor: pointer;
-  @include m.state-layer;
-
-  &:hover {
-    background: rgba(v.$danger, 0.12);
-  }
-}
-
-.doc__content {
-  margin-top: 22px;
-  line-height: 1.7;
-  color: v.$white;
-  font-size: v.$fs-base;
-}
-
-.doc__content h1,
-.doc__content h2,
-.doc__content h3 {
-  margin-top: 26px;
-  font-weight: v.$fw-semi;
-}
-
-.doc__content h1 {
-  font-size: var(--type-h1);
-}
-
-.doc__content h2 {
-  font-size: var(--type-h2);
-}
-
-.doc__content h3 {
-  font-size: var(--type-h3);
-}
-
-.doc__content ul {
-  padding-left: 0;
-  list-style: none;
-}
-
-.doc__content li {
-  margin-bottom: 12px;
-}
-
-.doc__content input[type="checkbox"] {
-  margin-right: 8px;
-  accent-color: var(--accent-light);
-}
-
-.doc__content a {
-  color: var(--accent-light);
-  text-decoration: none;
-  border-bottom: 1px solid rgba(var(--accent-light-rgb), 0.4);
-
-  &:hover {
-    opacity: 0.85;
-  }
-}
-
-.doc__content .source {
-  font-size: v.$fs-sm;
-  display: inline-block;
-  color: v.$muted;
-}
-
-.doc__content code {
-  background: rgba(v.$white, 0.06);
-  border: 1px solid rgba(v.$white, 0.06);
-  padding: 2px 6px;
-  border-radius: 8px;
-}
-
-.doc__content pre {
-  background: rgba(v.$white, 0.04);
-  padding: 16px;
-  border-radius: v.$radius-m;
-  border: 1px solid rgba(v.$white, 0.06);
-  overflow: auto;
-}
-
-@media (max-width: 900px) {
-  .doc__header h1 {
-    line-height: 1.2;
-  }
-
-  .doc__date,
-  .doc__content .source {
-    font-size: var(--type-meta);
-  }
-
-  .doc__content {
-    font-size: var(--type-body);
-    line-height: var(--lh-body);
-  }
-}
-
 
 .doc__panel {
   display: inline-flex;
@@ -191,17 +59,17 @@
   &:hover {
     background: rgba(v.$white, 0.08);
   }
+
+  &.is-active {
+    background: rgba(var(--accent-light-rgb), 0.18);
+    color: var(--accent-light);
+  }
 }
 
-.doc__icon--danger {
-  color: v.$danger;
-}
-
-.doc__editor {
-  margin-top: 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+.doc__editor-meta {
+  margin-top: 14px;
+  display: grid;
+  gap: 8px;
 }
 
 .doc__label {
@@ -209,20 +77,86 @@
   color: v.$muted;
 }
 
-.doc__input,
-.doc__textarea {
+.doc__input {
   @include m.input-field;
 }
 
-.doc__textarea {
-  min-height: 220px;
-  resize: vertical;
+.doc__toolbar {
+  margin-top: 6px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.doc__content {
+  margin-top: 20px;
+  color: v.$white;
+  font-size: var(--type-body);
+  line-height: var(--lh-body);
+
+  .tiptap {
+    outline: none;
+  }
+
+  .tiptap p {
+    margin: 0 0 0.85em;
+  }
+
+  .tiptap h1,
+  .tiptap h2,
+  .tiptap h3 {
+    margin-top: 22px;
+    margin-bottom: 10px;
+    font-weight: v.$fw-semi;
+  }
+
+  .tiptap h1 { font-size: var(--type-h1); }
+  .tiptap h2 { font-size: var(--type-h2); }
+  .tiptap h3 { font-size: var(--type-h3); }
+
+  .tiptap ul,
+  .tiptap ol {
+    padding-left: 22px;
+  }
+
+  .tiptap li {
+    margin-bottom: 8px;
+  }
+
+  .tiptap a {
+    color: var(--accent-light);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(var(--accent-light-rgb), 0.4);
+  }
+
+  .tiptap code {
+    background: rgba(v.$white, 0.06);
+    border: 1px solid rgba(v.$white, 0.06);
+    padding: 2px 6px;
+    border-radius: 8px;
+  }
+
+  .tiptap pre {
+    background: rgba(v.$white, 0.04);
+    padding: 16px;
+    border-radius: v.$radius-m;
+    border: 1px solid rgba(v.$white, 0.06);
+    overflow: auto;
+  }
+}
+
+.doc__content.is-editing .tiptap {
+  border: 1px solid rgba(v.$white, 0.12);
+  border-radius: v.$radius-m;
+  padding: 12px;
+  min-height: 280px;
+  background: rgba(v.$white, 0.02);
 }
 
 .doc__preview {
-  margin-top: 8px;
-  padding: 14px;
+  margin-top: 12px;
   border: 1px solid rgba(v.$white, 0.08);
   border-radius: v.$radius-m;
   background: rgba(v.$white, 0.02);
+  padding: 14px;
 }

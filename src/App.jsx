@@ -19,6 +19,7 @@ import {
 import { extractInlineTags, uniqueTags } from './utils/tags'
 import { buildSnippet } from './utils/string.jsx'
 import { renderMarkdownWithOutline, parseBriefMarkets } from './utils/markdown'
+import { richDocToHtml } from './utils/richText'
 import { formatDate } from './utils/date'
 import { createId, sortDocs } from './utils/helpers'
 import EditorModal from './components/EditorModal/EditorModal'
@@ -108,10 +109,13 @@ export default function App() {
       const nextDocs = snapshot.docs.map((snap) => {
         const data = snap.data() || {}
         const content = data.content || ''
+        const contentJson = data.contentJson || null
         const title = data.title || 'Untitled'
         const created = formatDate(data.createdAt?.toDate?.() || data.createdAt)
         const updated = formatDate(data.updatedAt?.toDate?.() || data.updatedAt)
-        const { html, outline } = renderMarkdownWithOutline(content)
+        const markdownRendered = renderMarkdownWithOutline(content)
+        const html = contentJson ? richDocToHtml(contentJson) : markdownRendered.html
+        const outline = contentJson ? [] : markdownRendered.outline
         const frontTags = Array.isArray(data.tags) ? data.tags : []
         const inlineTags = extractInlineTags(content)
         const tags = uniqueTags([...frontTags, ...inlineTags])
@@ -126,6 +130,7 @@ export default function App() {
           created,
           updated,
           content,
+          contentJson,
           html,
           outline,
           tags,
@@ -214,6 +219,7 @@ export default function App() {
         await updateDoc(doc(db, 'notes', editorId), {
           title: editorTitle.trim() || 'Untitled',
           content: editorContent,
+          contentJson: null,
           tags,
           updatedAt: serverTimestamp(),
         })
@@ -221,6 +227,7 @@ export default function App() {
         await addDoc(collection(db, 'notes'), {
           title: editorTitle.trim() || 'Untitled',
           content: editorContent,
+          contentJson: null,
           tags,
           type: 'note',
           createdAt: serverTimestamp(),
@@ -247,11 +254,12 @@ export default function App() {
     setEditorTags('')
   }
 
-  const handleUpdateNoteInline = async (docItem, { title, content, tags }) => {
+  const handleUpdateNoteInline = async (docItem, { title, content, contentJson, tags }) => {
     if (!docItem?.id) return
     await updateDoc(doc(db, 'notes', docItem.id), {
       title: title?.trim() || 'Untitled',
       content: content || '',
+      contentJson: contentJson || null,
       tags: Array.isArray(tags) ? tags : [],
       updatedAt: serverTimestamp(),
     })
