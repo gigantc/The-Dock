@@ -75,41 +75,41 @@ const Sidebar = forwardRef(function Sidebar({
           ref={actionsRef}
         >
           <button
-            className="sidebar__action-btn sidebar__action-btn--primary"
+            className="sidebar__action-btn sidebar__action-btn--primary tooltip-trigger"
             type="button"
             onClick={onNewNote}
             aria-label="New note"
-            title="New note"
+            data-tooltip="New note"
           >
             <FilePlus2 aria-hidden="true" size={16} strokeWidth={2} />
           </button>
           <button
-            className="sidebar__action-btn"
+            className="sidebar__action-btn tooltip-trigger"
             type="button"
             onClick={onNewList}
             aria-label="New list"
-            title="New list"
+            data-tooltip="New list"
           >
             <ListTodo aria-hidden="true" size={16} strokeWidth={2} />
           </button>
 
           <button
-            className="sidebar__action-btn"
+            className="sidebar__action-btn tooltip-trigger"
             type="button"
             onClick={onNewJournal}
             aria-label="New journal"
-            title="New journal"
+            data-tooltip="New journal"
           >
             <BookOpen aria-hidden="true" size={16} strokeWidth={2} />
           </button>
         </div>
 
         <button
-          className="sidebar__toggle"
+          className="sidebar__toggle tooltip-trigger"
           type="button"
           onClick={onToggleSidebar}
           aria-label={sidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
-          title={sidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
+          data-tooltip={sidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
         >
           {sidebarOpen
             ? <PanelLeftClose aria-hidden="true" size={16} strokeWidth={2} />

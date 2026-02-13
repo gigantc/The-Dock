@@ -107,23 +107,23 @@ export default function ListView({
                 }}
               />
               <button
-                className="list__rename-save"
+                className="list__rename-save tooltip-trigger"
                 type="button"
                 onClick={handleRename}
                 aria-label="Save list name"
-                title="Save"
+                data-tooltip="Save"
               >
                 <Save aria-hidden="true" size={16} strokeWidth={2} />
               </button>
               <button
-                className="list__rename-cancel"
+                className="list__rename-cancel tooltip-trigger"
                 type="button"
                 onClick={() => {
                   setIsEditingListTitle(false)
                   setListTitleDraft(activeList.title || '')
                 }}
                 aria-label="Cancel rename"
-                title="Cancel"
+                data-tooltip="Cancel"
               >
                 <X aria-hidden="true" size={16} strokeWidth={2} />
               </button>
@@ -132,14 +132,14 @@ export default function ListView({
             <div className="list__title-display">
               <h1>{activeList.title}</h1>
               <button
-                className="list__rename"
+                className="list__rename tooltip-trigger"
                 type="button"
                 onClick={() => {
                   setIsEditingListTitle(true)
                   setListTitleDraft(activeList.title || '')
                 }}
                 aria-label="Rename list"
-                title="Rename list"
+                data-tooltip="Rename list"
               >
                 <Pencil aria-hidden="true" size={16} strokeWidth={2} />
               </button>
@@ -150,11 +150,11 @@ export default function ListView({
           </div>
         </div>
         <button
-          className="list__delete"
+          className="list__delete tooltip-trigger"
           type="button"
           onClick={onDeleteList}
           aria-label="Delete list"
-          title="Delete list"
+          data-tooltip="Delete list"
         >
           <Trash2 aria-hidden="true" size={16} strokeWidth={2} />
         </button>
@@ -241,10 +241,10 @@ export default function ListView({
                       }}
                       autoFocus
                     />
-                    <button className="list-item__action" type="button" onClick={() => saveEditItem(activeList.id, item.id)} aria-label="Save item" title="Save">
+                    <button className="list-item__action tooltip-trigger" type="button" onClick={() => saveEditItem(activeList.id, item.id)} aria-label="Save item" data-tooltip="Save">
                       <Save aria-hidden="true" size={14} strokeWidth={2} />
                     </button>
-                    <button className="list-item__action" type="button" onClick={cancelEditItem} aria-label="Cancel edit" title="Cancel">
+                    <button className="list-item__action tooltip-trigger" type="button" onClick={cancelEditItem} aria-label="Cancel edit" data-tooltip="Cancel">
                       <X aria-hidden="true" size={14} strokeWidth={2} />
                     </button>
                   </div>
@@ -252,11 +252,11 @@ export default function ListView({
                   <>
                     <span className="list-item__text">{item.text}</span>
                     <button
-                      className="list-item__action"
+                      className="list-item__action tooltip-trigger"
                       type="button"
                       onClick={() => beginEditItem(item)}
                       aria-label="Edit item"
-                      title="Edit item"
+                      data-tooltip="Edit item"
                     >
                       <Pencil aria-hidden="true" size={14} strokeWidth={2} />
                     </button>
@@ -264,11 +264,11 @@ export default function ListView({
                 )}
 
                 <button
-                  className="list-item__delete"
+                  className="list-item__delete tooltip-trigger"
                   type="button"
                   onClick={() => onDeleteItem(activeList.id, item.id)}
                   aria-label="Delete item"
-                  title="Delete item"
+                  data-tooltip="Delete item"
                 >
                   <Trash2 aria-hidden="true" size={14} strokeWidth={2} />
                 </button>

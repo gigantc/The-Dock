@@ -65,10 +65,10 @@ export default function SortableListItem({
             }}
             autoFocus
           />
-          <button className="list-item__action" type="button" onClick={onSaveEdit} aria-label="Save item" title="Save">
+          <button className="list-item__action tooltip-trigger" type="button" onClick={onSaveEdit} aria-label="Save item" data-tooltip="Save">
             <Save aria-hidden="true" size={14} strokeWidth={2} />
           </button>
-          <button className="list-item__action" type="button" onClick={onCancelEdit} aria-label="Cancel edit" title="Cancel">
+          <button className="list-item__action tooltip-trigger" type="button" onClick={onCancelEdit} aria-label="Cancel edit" data-tooltip="Cancel">
             <X aria-hidden="true" size={14} strokeWidth={2} />
           </button>
         </div>
@@ -76,14 +76,14 @@ export default function SortableListItem({
         <>
           <span className="list-item__text">{item.text}</span>
           <button
-            className="list-item__action"
+            className="list-item__action tooltip-trigger"
             type="button"
             onClick={(event) => {
               event.stopPropagation()
               onStartEdit()
             }}
             aria-label="Edit item"
-            title="Edit item"
+            data-tooltip="Edit item"
           >
             <Pencil aria-hidden="true" size={14} strokeWidth={2} />
           </button>
@@ -91,11 +91,11 @@ export default function SortableListItem({
       )}
 
       <button
-        className="list-item__delete"
+        className="list-item__delete tooltip-trigger"
         type="button"
         onClick={onDelete}
         aria-label="Delete item"
-        title="Delete item"
+        data-tooltip="Delete item"
       >
         <Trash2 aria-hidden="true" size={14} strokeWidth={2} />
       </button>
