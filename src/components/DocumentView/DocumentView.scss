@@ -18,6 +18,25 @@
   flex-direction: column;
 }
 
+
+.doc__header.is-sticky {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  padding: 10px 0 8px;
+  background: linear-gradient(180deg, rgba(14, 17, 23, 0.97), rgba(14, 17, 23, 0.88));
+  backdrop-filter: blur(4px);
+}
+
+.doc__title-input {
+  @include m.input-field;
+  font-size: var(--type-h1);
+  font-weight: v.$fw-bold;
+  line-height: 1.2;
+  padding: 8px 10px;
+  max-width: 100%;
+}
+
 .doc__header h1 {
   margin: 0 0 10px;
   font-size: var(--type-h1);

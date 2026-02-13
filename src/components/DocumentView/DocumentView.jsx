@@ -75,9 +75,19 @@ export default function DocumentView({
 
   return (
     <article className="doc">
-      <header className="doc__header">
+      <header className={`doc__header ${isEditing ? 'is-sticky' : ''}`}>
         <div className="doc__title">
-          <h1>{briefGreeting || activeDoc.title}</h1>
+          {isEditing && editable ? (
+            <input
+              className="doc__title-input"
+              type="text"
+              value={titleDraft}
+              onChange={(event) => setTitleDraft(event.target.value)}
+              placeholder="Untitled"
+            />
+          ) : (
+            <h1>{briefGreeting || activeDoc.title}</h1>
+          )}
           {activeDoc.isBrief && <div className="doc__date">{activeDoc.title}</div>}
           {!activeDoc.isBrief && activeDoc.created && <div className="doc__date">{activeDoc.created}</div>}
           {!activeDoc.isBrief && (
@@ -106,8 +116,6 @@ export default function DocumentView({
 
       {isEditing && editable && (
         <div className="doc__editor-meta">
-          <label className="doc__label">Title</label>
-          <input className="doc__input" type="text" value={titleDraft} onChange={(event) => setTitleDraft(event.target.value)} />
           <label className="doc__label">Tags</label>
           <input className="doc__input" type="text" value={tagsDraft} onChange={(event) => setTagsDraft(event.target.value)} placeholder="work, ideas" />
 
