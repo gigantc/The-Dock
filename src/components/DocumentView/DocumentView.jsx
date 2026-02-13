@@ -17,6 +17,7 @@ export default function DocumentView({
   const [isEditing, setIsEditing] = useState(false)
   const [titleDraft, setTitleDraft] = useState('')
   const [tagsDraft, setTagsDraft] = useState('')
+  const isDraftDoc = Boolean(activeDoc.isDraft || autoStartEdit)
 
   const initialContent = useMemo(() => {
     if (activeDoc.contentJson) return activeDoc.contentJson
@@ -59,11 +60,18 @@ export default function DocumentView({
       contentJson: editor.getJSON(),
       content: editor.getText(),
     })
-    setIsEditing(Boolean(autoStartEdit && editable))
+    setIsEditing(false)
   }
 
-  const cancelEdit = () => {
-    setIsEditing(Boolean(autoStartEdit && editable))
+  const cancelEdit = async () => {
+    if (isDraftDoc) {
+      const discard = window.confirm('Discard this new entry?')
+      if (!discard) return
+      await onDiscardNew?.(activeDoc)
+      return
+    }
+
+    setIsEditing(false)
     setTitleDraft(activeDoc.title || '')
     setTagsDraft((activeDoc.rawTags || activeDoc.tags || []).join(', '))
     if (editor) editor.commands.setContent(activeDoc.contentJson || markdownToInitialHtml(activeDoc.content || ''), false)
