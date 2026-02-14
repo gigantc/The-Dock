@@ -13,7 +13,7 @@ const SearchBar = forwardRef(function SearchBar({ query, onQueryChange, filtered
         onChange={(e) => onQueryChange(e.target.value)}
       />
       <div className="search__hint">
-        Press / to search · Showing {filteredCount} of {totalCount} · Press ? for help
+        Showing {filteredCount} of {totalCount}
       </div>
     </div>
   )

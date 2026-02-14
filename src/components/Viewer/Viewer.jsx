@@ -8,11 +8,15 @@ export default function Viewer({
   listStats,
   briefGreeting,
   user,
-  onEditDoc,
-  onDeleteBrief,
+  autoEditDocId,
+  onSaveDoc,
+  onDiscardNewDoc,
+  onRequestDiscardNewDoc,
+  onDeleteDoc,
   onAddListItem,
   onToggleListItem,
   onDeleteListItem,
+  onEditListItem,
   onDeleteList,
   onRenameList,
   onDragEnd,
@@ -26,6 +30,7 @@ export default function Viewer({
           onAddItem={onAddListItem}
           onToggleItem={onToggleListItem}
           onDeleteItem={onDeleteListItem}
+          onEditItem={onEditListItem}
           onDeleteList={onDeleteList}
           onRenameList={onRenameList}
           onDragEnd={onDragEnd}
@@ -41,8 +46,11 @@ export default function Viewer({
           activeDoc={activeDoc}
           briefGreeting={briefGreeting}
           user={user}
-          onEdit={onEditDoc}
-          onDeleteBrief={onDeleteBrief}
+          onSave={onSaveDoc}
+          onDiscardNew={onDiscardNewDoc}
+          onRequestDiscardNew={onRequestDiscardNewDoc}
+          onDelete={onDeleteDoc}
+          autoStartEdit={autoEditDocId === activeDoc?.id}
         />
       </main>
     )

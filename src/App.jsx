@@ -19,12 +19,11 @@ import {
 import { extractInlineTags, uniqueTags } from './utils/tags'
 import { buildSnippet } from './utils/string.jsx'
 import { renderMarkdownWithOutline, parseBriefMarkets } from './utils/markdown'
+import { richDocToHtml } from './utils/richText'
 import { formatDate } from './utils/date'
 import { createId, sortDocs } from './utils/helpers'
-import EditorModal from './components/EditorModal/EditorModal'
 import NewListModal from './components/NewListModal/NewListModal'
 import ConfirmDialog from './components/ConfirmDialog/ConfirmDialog'
-import ShortcutsModal from './components/ShortcutsModal/ShortcutsModal'
 import AppHeader from './components/AppHeader/AppHeader'
 import Rightbar from './components/Rightbar/Rightbar'
 import Sidebar from './components/Sidebar/Sidebar'
@@ -39,15 +38,8 @@ export default function App() {
   const docs = useMemo(() => sortDocs(firestoreDocs), [firestoreDocs])
   const [query, setQuery] = useState('')
   const [activePath, setActivePath] = useState(docs[0]?.path)
-  const [showShortcuts, setShowShortcuts] = useState(false)
   const [openSections, setOpenSections] = useState({ notes: true, lists: true, journal: true, briefs: true })
   const [user, setUser] = useState(null)
-  const [showEditor, setShowEditor] = useState(false)
-  const [editorId, setEditorId] = useState(null)
-  const [editorTitle, setEditorTitle] = useState('')
-  const [editorContent, setEditorContent] = useState('')
-  const [editorTags, setEditorTags] = useState('')
-  const [editorSaving, setEditorSaving] = useState(false)
   const [showListModal, setShowListModal] = useState(false)
   const [listTitle, setListTitle] = useState('')
   const [listSaving, setListSaving] = useState(false)
@@ -62,6 +54,7 @@ export default function App() {
     if (typeof window === 'undefined') return true
     return window.innerWidth > 900
   })
+  const [autoEditDocId, setAutoEditDocId] = useState(null)
   const appRef = useRef(null)
   const searchRef = useRef(null)
   const isMobileRef = useRef(typeof window !== 'undefined' ? window.innerWidth <= 900 : false)
@@ -110,10 +103,13 @@ export default function App() {
       const nextDocs = snapshot.docs.map((snap) => {
         const data = snap.data() || {}
         const content = data.content || ''
+        const contentJson = data.contentJson || null
         const title = data.title || 'Untitled'
         const created = formatDate(data.createdAt?.toDate?.() || data.createdAt)
         const updated = formatDate(data.updatedAt?.toDate?.() || data.updatedAt)
-        const { html, outline } = renderMarkdownWithOutline(content)
+        const markdownRendered = renderMarkdownWithOutline(content)
+        const html = contentJson ? richDocToHtml(contentJson) : markdownRendered.html
+        const outline = contentJson ? [] : markdownRendered.outline
         const frontTags = Array.isArray(data.tags) ? data.tags : []
         const inlineTags = extractInlineTags(content)
         const tags = uniqueTags([...frontTags, ...inlineTags])
@@ -128,12 +124,14 @@ export default function App() {
           created,
           updated,
           content,
+          contentJson,
           html,
           outline,
           tags,
           rawTags: frontTags,
           isJournal,
           isBrief,
+          isDraft: Boolean(data.isDraft),
           source: 'firestore',
           id: snap.id,
         }
@@ -187,69 +185,80 @@ export default function App() {
     }
   }, [docs, activePath, activeListId])
 
-  const openEditor = (docItem) => {
+
+  const handleCreateNote = async () => {
     if (!user) return
-    if (docItem) {
-      setEditorId(docItem.id)
-      setEditorTitle(docItem.title)
-      setEditorContent(docItem.content)
-      setEditorTags((docItem.rawTags || docItem.tags || []).join(', '))
-    } else {
-      setEditorId(null)
-      setEditorTitle('')
-      setEditorContent('')
-      setEditorTags('')
-    }
-    setShowEditor(true)
+    const docRef = await addDoc(collection(db, 'notes'), {
+      title: 'Untitled',
+      content: '',
+      contentJson: {
+        type: 'doc',
+        content: [
+          { type: 'paragraph' },
+        ],
+      },
+      tags: [],
+      type: 'note',
+      isDraft: true,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    })
+    setAutoEditDocId(docRef.id)
+    setActivePath(`firestore:note/${docRef.id}`)
+    setActiveListId(null)
+    if (isMobileViewport) setSidebarOpen(false)
   }
 
-  const handleSaveNote = async () => {
-    if (!user) return
-    setEditorSaving(true)
-    const tags = editorTags
-      .split(',')
-      .map((tag) => tag.trim())
-      .filter(Boolean)
-
-    try {
-      if (editorId) {
-        await updateDoc(doc(db, 'notes', editorId), {
-          title: editorTitle.trim() || 'Untitled',
-          content: editorContent,
-          tags,
-          updatedAt: serverTimestamp(),
-        })
-      } else {
-        await addDoc(collection(db, 'notes'), {
-          title: editorTitle.trim() || 'Untitled',
-          content: editorContent,
-          tags,
-          type: 'note',
-          createdAt: serverTimestamp(),
-          updatedAt: serverTimestamp(),
-        })
-      }
-      setShowEditor(false)
-      setEditorId(null)
-      setEditorTitle('')
-      setEditorContent('')
-      setEditorTags('')
-    } finally {
-      setEditorSaving(false)
+  const handleUpdateNoteInline = async (docItem, { title, content, contentJson, tags }) => {
+    if (!docItem?.id) return
+    await updateDoc(doc(db, 'notes', docItem.id), {
+      title: title?.trim() || 'Untitled',
+      content: content || '',
+      contentJson: contentJson || null,
+      tags: Array.isArray(tags) ? tags : [],
+      updatedAt: serverTimestamp(),
+      isDraft: false,
+    })
+    if (autoEditDocId === docItem.id) {
+      setAutoEditDocId(null)
     }
   }
 
-  const handleDeleteNote = async () => {
-    if (!editorId) return
-    await deleteDoc(doc(db, 'notes', editorId))
-    setShowEditor(false)
-    setEditorId(null)
-    setEditorTitle('')
-    setEditorContent('')
-    setEditorTags('')
+  const handleDeleteNoteInline = async (docItem) => {
+    if (!docItem?.id) return
+    await deleteDoc(doc(db, 'notes', docItem.id))
+    setActivePath(null)
+    setActiveListId(null)
+  }
+
+
+  const handleCreateJournal = async () => {
+    if (!user) return
+    const today = new Date().toISOString().slice(0, 10)
+    const title = `Daily Journal — ${today}`
+    const docRef = await addDoc(collection(db, 'notes'), {
+      title,
+      content: '',
+      contentJson: {
+        type: 'doc',
+        content: [
+          { type: 'paragraph' },
+        ],
+      },
+      tags: ['journal'],
+      type: 'journal',
+      isDraft: true,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    })
+    setAutoEditDocId(docRef.id)
+    setActivePath(`firestore:journal/${docRef.id}`)
+    setActiveListId(null)
+    if (isMobileViewport) setSidebarOpen(false)
   }
 
   const handleDeleteBrief = async (docItem) => {
+
     if (!docItem?.id) return
     await deleteDoc(doc(db, 'notes', docItem.id))
     setActivePath(null)
@@ -354,11 +363,41 @@ export default function App() {
   }
 
 
+  const handleEditListItem = async (listId, itemId, nextText) => {
+    const list = firestoreLists.find((item) => item.id === listId)
+    if (!list) return
+    const trimmed = nextText.trim()
+    if (!trimmed) return
+    const nextItems = (list.items || []).map((item) => (
+      item.id === itemId ? { ...item, text: trimmed } : item
+    ))
+    await updateListItems(listId, nextItems)
+  }
+
   const handleDeleteListItem = async (listId, itemId) => {
     const list = firestoreLists.find((item) => item.id === listId)
     if (!list) return
     const nextItems = (list.items || []).filter((item) => item.id !== itemId)
     await updateListItems(listId, nextItems)
+  }
+
+
+  const handleDiscardNewDocInline = async (docItem) => {
+    if (!docItem?.id) return
+    await deleteDoc(doc(db, 'notes', docItem.id))
+    if (autoEditDocId === docItem.id) setAutoEditDocId(null)
+    setActivePath(null)
+    setActiveListId(null)
+  }
+
+
+  const requestDiscardNewDoc = (docItem) => {
+    openConfirmDialog({
+      title: 'Discard new entry?',
+      body: <>Discard <strong>{docItem?.title || 'Untitled'}</strong>? Unsaved changes will be lost.</>,
+      confirmLabel: 'Discard',
+      onConfirm: () => handleDiscardNewDocInline(docItem),
+    })
   }
 
   const handleDeleteList = async () => {
@@ -513,43 +552,6 @@ export default function App() {
     }
   }, [filtered, activePath, activeListId])
 
-  useEffect(() => {
-    const onKey = (event) => {
-      if (event.key === '/') {
-        event.preventDefault()
-        requestAnimationFrame(() => searchRef.current?.focus())
-        return
-      }
-
-      if (!filtered.length || activeListId) return
-
-      const currentIndex = filtered.findIndex((doc) => doc.path === activePath)
-      if (event.key === 'ArrowDown') {
-        event.preventDefault()
-        const nextIndex = Math.min(currentIndex + 1, filtered.length - 1)
-        setActivePath(filtered[nextIndex].path)
-      }
-      if (event.key === 'ArrowUp') {
-        event.preventDefault()
-        const prevIndex = Math.max(currentIndex - 1, 0)
-        setActivePath(filtered[prevIndex].path)
-      }
-      if (event.key === 'Escape') {
-        if (showShortcuts) {
-          setShowShortcuts(false)
-        } else {
-          searchRef.current?.blur()
-        }
-      }
-
-      if (event.key === '?') {
-        setShowShortcuts((prev) => !prev)
-      }
-    }
-
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [filtered, activePath, showShortcuts, activeListId])
 
   const grouped = useMemo(() => {
     const excludedNoteTitles = new Set(['Brief Archive', 'The Dock Docs'])
@@ -583,25 +585,6 @@ export default function App() {
 
   return (
     <div className="app" ref={appRef}>
-      {showEditor && (
-        <EditorModal
-          editorId={editorId}
-          editorTitle={editorTitle}
-          editorContent={editorContent}
-          editorTags={editorTags}
-          editorSaving={editorSaving}
-          onTitleChange={setEditorTitle}
-          onContentChange={setEditorContent}
-          onTagsChange={setEditorTags}
-          onSave={handleSaveNote}
-          onDelete={() => openConfirmDialog({
-            title: 'Delete note?',
-            body: <>Delete <strong>{editorTitle.trim() || 'Untitled'}</strong>? This cannot be undone.</>,
-            onConfirm: handleDeleteNote,
-          })}
-          onClose={() => setShowEditor(false)}
-        />
-      )}
 
       {showListModal && (
         <NewListModal
@@ -619,12 +602,10 @@ export default function App() {
         onConfirm={handleConfirmAction}
       />
 
-      {showShortcuts && (
-        <ShortcutsModal onClose={() => setShowShortcuts(false)} />
-      )}
 
       <AppHeader
         user={user}
+        autoEditDocId={autoEditDocId}
         theme={theme}
         onThemeChange={setTheme}
         version={APP_VERSION}
@@ -644,14 +625,17 @@ export default function App() {
         activeListId={activeListId}
         sidebarOpen={sidebarOpen}
         onToggleSidebar={() => setSidebarOpen((prev) => !prev)}
-        onNewNote={() => openEditor()}
+        onNewNote={handleCreateNote}
         onNewList={() => setShowListModal(true)}
+        onNewJournal={handleCreateJournal}
         onSelectDoc={(path) => {
+          setAutoEditDocId(null)
           setActivePath(path)
           setActiveListId(null)
           if (isMobileViewport) setSidebarOpen(false)
         }}
         onSelectList={(id) => {
+          setAutoEditDocId(null)
           setActiveListId(id)
           setActivePath(null)
           if (isMobileViewport) setSidebarOpen(false)
@@ -664,16 +648,20 @@ export default function App() {
         listStats={listStats}
         briefGreeting={briefGreeting}
         user={user}
-        onEditDoc={openEditor}
-        onDeleteBrief={(docItem) => openConfirmDialog({
-          title: 'Delete brief?',
-          body: <>Delete <strong>{docItem.title}</strong>? This cannot be undone.</>,
-          confirmLabel: 'Delete Brief',
-          onConfirm: () => handleDeleteBrief(docItem),
+        autoEditDocId={autoEditDocId}
+        onSaveDoc={handleUpdateNoteInline}
+        onDiscardNewDoc={handleDiscardNewDocInline}
+        onRequestDiscardNewDoc={requestDiscardNewDoc}
+        onDeleteDoc={(docItem) => openConfirmDialog({
+          title: docItem?.isBrief ? 'Delete brief?' : 'Delete note?',
+          body: <>Delete <strong>{docItem?.title || 'Untitled'}</strong>? This cannot be undone.</>,
+          confirmLabel: docItem?.isBrief ? 'Delete Brief' : 'Delete Note',
+          onConfirm: () => (docItem?.isBrief ? handleDeleteBrief(docItem) : handleDeleteNoteInline(docItem)),
         })}
         onAddListItem={handleAddListItem}
         onToggleListItem={handleToggleListItem}
         onDeleteListItem={handleDeleteListItem}
+        onEditListItem={handleEditListItem}
         onDeleteList={() => openConfirmDialog({
           title: 'Delete list?',
           body: <>Delete <strong>{activeList?.title}</strong>? This cannot be undone.</>,

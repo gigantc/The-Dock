@@ -19,6 +19,7 @@ export default function ListView({
   onAddItem,
   onToggleItem,
   onDeleteItem,
+  onEditItem,
   onDeleteList,
   onRenameList,
   onDragEnd,
@@ -26,6 +27,8 @@ export default function ListView({
   const [newItemText, setNewItemText] = useState('')
   const [isEditingListTitle, setIsEditingListTitle] = useState(false)
   const [listTitleDraft, setListTitleDraft] = useState('')
+  const [editingItemId, setEditingItemId] = useState(null)
+  const [editingItemDraft, setEditingItemDraft] = useState('')
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -33,12 +36,12 @@ export default function ListView({
     })
   )
 
-  /* eslint-disable react-hooks/set-state-in-effect -- intentional: reset edit state on list change */
   useEffect(() => {
     setIsEditingListTitle(false)
     setListTitleDraft(activeList?.title || '')
+    setEditingItemId(null)
+    setEditingItemDraft('')
   }, [activeList?.id, activeList?.title])
-  /* eslint-enable react-hooks/set-state-in-effect */
 
   const incompleteItems = useMemo(() => {
     if (!activeList?.items?.length) return []
@@ -61,6 +64,23 @@ export default function ListView({
   const handleRename = () => {
     onRenameList(listTitleDraft.trim() || 'Untitled List')
     setIsEditingListTitle(false)
+  }
+
+  const beginEditItem = (item) => {
+    setEditingItemId(item.id)
+    setEditingItemDraft(item.text || '')
+  }
+
+  const cancelEditItem = () => {
+    setEditingItemId(null)
+    setEditingItemDraft('')
+  }
+
+  const saveEditItem = async (listId, itemId) => {
+    const next = editingItemDraft.trim()
+    if (!next) return
+    await onEditItem(listId, itemId, next)
+    cancelEditItem()
   }
 
   return (
@@ -87,23 +107,23 @@ export default function ListView({
                 }}
               />
               <button
-                className="list__rename-save"
+                className="list__rename-save tooltip-trigger"
                 type="button"
                 onClick={handleRename}
                 aria-label="Save list name"
-                title="Save"
+                data-tooltip="Save"
               >
                 <Save aria-hidden="true" size={16} strokeWidth={2} />
               </button>
               <button
-                className="list__rename-cancel"
+                className="list__rename-cancel tooltip-trigger"
                 type="button"
                 onClick={() => {
                   setIsEditingListTitle(false)
                   setListTitleDraft(activeList.title || '')
                 }}
                 aria-label="Cancel rename"
-                title="Cancel"
+                data-tooltip="Cancel"
               >
                 <X aria-hidden="true" size={16} strokeWidth={2} />
               </button>
@@ -112,14 +132,14 @@ export default function ListView({
             <div className="list__title-display">
               <h1>{activeList.title}</h1>
               <button
-                className="list__rename"
+                className="list__rename tooltip-trigger"
                 type="button"
                 onClick={() => {
                   setIsEditingListTitle(true)
                   setListTitleDraft(activeList.title || '')
                 }}
                 aria-label="Rename list"
-                title="Rename list"
+                data-tooltip="Rename list"
               >
                 <Pencil aria-hidden="true" size={16} strokeWidth={2} />
               </button>
@@ -130,11 +150,11 @@ export default function ListView({
           </div>
         </div>
         <button
-          className="list__delete"
+          className="list__delete tooltip-trigger"
           type="button"
           onClick={onDeleteList}
           aria-label="Delete list"
-          title="Delete list"
+          data-tooltip="Delete list"
         >
           <Trash2 aria-hidden="true" size={16} strokeWidth={2} />
         </button>
@@ -174,6 +194,12 @@ export default function ListView({
                   <SortableListItem
                     key={item.id}
                     item={item}
+                    isEditing={editingItemId === item.id}
+                    editDraft={editingItemDraft}
+                    onStartEdit={() => beginEditItem(item)}
+                    onEditDraftChange={setEditingItemDraft}
+                    onSaveEdit={() => saveEditItem(activeList.id, item.id)}
+                    onCancelEdit={cancelEditItem}
                     onToggle={() => onToggleItem(activeList.id, item.id)}
                     onDelete={() => onDeleteItem(activeList.id, item.id)}
                   />
@@ -195,13 +221,54 @@ export default function ListView({
                 >
                   <span className="list-item__check" />
                 </button>
-                <span className="list-item__text">{item.text}</span>
+
+                {editingItemId === item.id ? (
+                  <div className="list-item__edit-wrap">
+                    <input
+                      className="list-item__edit-input"
+                      type="text"
+                      value={editingItemDraft}
+                      onChange={(event) => setEditingItemDraft(event.target.value)}
+                      onKeyDown={(event) => {
+                        if (event.key === 'Enter') {
+                          event.preventDefault()
+                          saveEditItem(activeList.id, item.id)
+                        }
+                        if (event.key === 'Escape') {
+                          event.preventDefault()
+                          cancelEditItem()
+                        }
+                      }}
+                      autoFocus
+                    />
+                    <button className="list-item__action tooltip-trigger" type="button" onClick={() => saveEditItem(activeList.id, item.id)} aria-label="Save item" data-tooltip="Save">
+                      <Save aria-hidden="true" size={14} strokeWidth={2} />
+                    </button>
+                    <button className="list-item__action tooltip-trigger" type="button" onClick={cancelEditItem} aria-label="Cancel edit" data-tooltip="Cancel">
+                      <X aria-hidden="true" size={14} strokeWidth={2} />
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <span className="list-item__text">{item.text}</span>
+                    <button
+                      className="list-item__action tooltip-trigger"
+                      type="button"
+                      onClick={() => beginEditItem(item)}
+                      aria-label="Edit item"
+                      data-tooltip="Edit item"
+                    >
+                      <Pencil aria-hidden="true" size={14} strokeWidth={2} />
+                    </button>
+                  </>
+                )}
+
                 <button
-                  className="list-item__delete"
+                  className="list-item__delete tooltip-trigger"
                   type="button"
                   onClick={() => onDeleteItem(activeList.id, item.id)}
                   aria-label="Delete item"
-                  title="Delete item"
+                  data-tooltip="Delete item"
                 >
                   <Trash2 aria-hidden="true" size={14} strokeWidth={2} />
                 </button>
