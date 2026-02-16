@@ -121,8 +121,6 @@ export default function DocumentView({
             {tool(activeDoc.isBrief ? 'Delete brief' : 'Delete note', () => onDelete(activeDoc), false, <Trash2 aria-hidden="true" size={16} />)}
           </div>
         )}
-      </header>
-
       {isEditing && editable && (
         <div className="doc__editor-meta is-sticky">
           <label className="doc__label">Tags</label>
@@ -146,6 +144,7 @@ export default function DocumentView({
           )}
         </div>
       )}
+      </header>
 
       <div className={`doc__content ${isEditing ? 'is-editing' : ''}`}>
         <EditorContent editor={editor} />
