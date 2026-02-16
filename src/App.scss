@@ -94,7 +94,7 @@
 
 @media (max-width: 900px) {
   .app {
-    --sidebar-width: 48px;
+    --sidebar-width: 42px;
     --sidebar-panel-width: 280px;
     grid-template-columns: var(--sidebar-width) 1fr;
     grid-template-areas:

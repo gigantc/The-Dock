@@ -112,5 +112,15 @@
 
 
 .sidebar--collapsed .sidebar__toggle {
-  right: 10px;
+  right: 2px;
+  top: 4px;
+}
+
+@media (max-width: 900px) {
+  .sidebar--collapsed .sidebar__toggle {
+    width: 30px;
+    height: 30px;
+    flex: 0 0 30px;
+    border-radius: 9px;
+  }
 }

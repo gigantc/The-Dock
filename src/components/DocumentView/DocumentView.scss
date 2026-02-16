@@ -143,6 +143,8 @@
 
   .tiptap {
     outline: none;
+    overflow-wrap: anywhere;
+    word-break: break-word;
   }
 
   .tiptap p {
