@@ -108,6 +108,15 @@
     flex-wrap: nowrap;
   }
 
+  .viewer {
+    transition: transform 0.34s ease;
+    will-change: transform;
+  }
+
+  .sidebar.sidebar--open ~ .viewer {
+    transform: translateX(calc(var(--sidebar-panel-width) - var(--sidebar-width)));
+  }
+
 }
 
 
@@ -155,4 +164,11 @@
   transition-delay: 1s;
   opacity: 1;
   transform: translateX(-50%) translateY(0);
+}
+
+@media (hover: none), (pointer: coarse) {
+  .tooltip-trigger[data-tooltip]::after,
+  .tooltip-trigger[data-tooltip]::before {
+    display: none !important;
+  }
 }
