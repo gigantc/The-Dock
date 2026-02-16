@@ -10,12 +10,15 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
+  flex-wrap: wrap;
   gap: 16px;
 }
 
 .doc__title {
   display: flex;
   flex-direction: column;
+  flex: 1 1 320px;
+  min-width: 0;
 }
 
 
@@ -73,6 +76,7 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  margin-left: auto;
 }
 
 .doc__icon {
@@ -99,6 +103,8 @@
 }
 
 .doc__editor-meta {
+  flex: 1 0 100%;
+  width: 100%;
   margin-top: 10px;
   display: grid;
   gap: 8px;
