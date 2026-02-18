@@ -116,19 +116,19 @@ export default function ListView({
         <div className="list__panel">
           {isEditingListTitle ? (
             <>
-              <button className="list__icon tooltip-trigger" type="button" onClick={handleRename} aria-label="Save list name" data-tooltip="Save">
+              <button className="list__icon" type="button" onClick={handleRename} aria-label="Save list name" data-tooltip="Save">
                 <Save aria-hidden="true" size={16} strokeWidth={2} />
               </button>
-              <button className="list__icon tooltip-trigger" type="button" onClick={() => { setIsEditingListTitle(false); setListTitleDraft(activeList.title || '') }} aria-label="Cancel rename" data-tooltip="Cancel">
+              <button className="list__icon" type="button" onClick={() => { setIsEditingListTitle(false); setListTitleDraft(activeList.title || '') }} aria-label="Cancel rename" data-tooltip="Cancel">
                 <X aria-hidden="true" size={16} strokeWidth={2} />
               </button>
             </>
           ) : (
-            <button className="list__icon tooltip-trigger" type="button" onClick={() => { setIsEditingListTitle(true); setListTitleDraft(activeList.title || '') }} aria-label="Rename list" data-tooltip="Rename list">
+            <button className="list__icon" type="button" onClick={() => { setIsEditingListTitle(true); setListTitleDraft(activeList.title || '') }} aria-label="Rename list" data-tooltip="Rename list">
               <Pencil aria-hidden="true" size={16} strokeWidth={2} />
             </button>
           )}
-          <button className="list__icon tooltip-trigger" type="button" onClick={onDeleteList} aria-label="Delete list" data-tooltip="Delete list">
+          <button className="list__icon" type="button" onClick={onDeleteList} aria-label="Delete list" data-tooltip="Delete list">
             <Trash2 aria-hidden="true" size={16} strokeWidth={2} />
           </button>
         </div>
@@ -147,7 +147,7 @@ export default function ListView({
             }}
           />
           <button
-            className="list__icon tooltip-trigger"
+            className="list__icon"
             type="button"
             onClick={handleAdd}
             disabled={!newItemText.trim()}
@@ -217,10 +217,10 @@ export default function ListView({
                       }}
                       autoFocus
                     />
-                    <button className="list-item__action tooltip-trigger" type="button" onClick={() => saveEditItem(activeList.id, item.id)} aria-label="Save item" data-tooltip="Save">
+                    <button className="list-item__action" type="button" onClick={() => saveEditItem(activeList.id, item.id)} aria-label="Save item" data-tooltip="Save">
                       <Save aria-hidden="true" size={14} strokeWidth={2} />
                     </button>
-                    <button className="list-item__action tooltip-trigger" type="button" onClick={cancelEditItem} aria-label="Cancel edit" data-tooltip="Cancel">
+                    <button className="list-item__action" type="button" onClick={cancelEditItem} aria-label="Cancel edit" data-tooltip="Cancel">
                       <X aria-hidden="true" size={14} strokeWidth={2} />
                     </button>
                   </div>
@@ -228,7 +228,7 @@ export default function ListView({
                   <>
                     <span className="list-item__text">{item.text}</span>
                     <button
-                      className="list-item__action tooltip-trigger"
+                      className="list-item__action"
                       type="button"
                       onClick={() => beginEditItem(item)}
                       aria-label="Edit item"
@@ -240,7 +240,7 @@ export default function ListView({
                 )}
 
                 <button
-                  className="list-item__delete tooltip-trigger"
+                  className="list-item__delete"
                   type="button"
                   onClick={() => onDeleteItem(activeList.id, item.id)}
                   aria-label="Delete item"

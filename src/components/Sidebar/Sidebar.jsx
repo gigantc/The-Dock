@@ -73,7 +73,7 @@ const Sidebar = forwardRef(function Sidebar({
           ref={actionsRef}
         >
           <button
-            className="sidebar__action-btn sidebar__action-btn--primary tooltip-trigger"
+            className="sidebar__action-btn sidebar__action-btn--primary"
             type="button"
             onClick={onNewNote}
             aria-label="New note"
@@ -82,7 +82,7 @@ const Sidebar = forwardRef(function Sidebar({
             <FilePlus2 aria-hidden="true" size={16} strokeWidth={2} />
           </button>
           <button
-            className="sidebar__action-btn tooltip-trigger"
+            className="sidebar__action-btn"
             type="button"
             onClick={onNewList}
             aria-label="New list"
@@ -92,7 +92,7 @@ const Sidebar = forwardRef(function Sidebar({
           </button>
 
           <button
-            className="sidebar__action-btn tooltip-trigger"
+            className="sidebar__action-btn"
             type="button"
             onClick={onNewJournal}
             aria-label="New journal"
@@ -103,7 +103,7 @@ const Sidebar = forwardRef(function Sidebar({
         </div>
 
         <button
-          className="sidebar__toggle tooltip-trigger"
+          className="sidebar__toggle"
           type="button"
           onClick={onToggleSidebar}
           aria-label={sidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}

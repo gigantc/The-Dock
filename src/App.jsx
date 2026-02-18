@@ -28,6 +28,7 @@ import AppHeader from './components/AppHeader/AppHeader'
 import Rightbar from './components/Rightbar/Rightbar'
 import Sidebar from './components/Sidebar/Sidebar'
 import Viewer from './components/Viewer/Viewer'
+import Tooltip from './components/Tooltip/Tooltip'
 import LoginPage from './components/LoginPage/LoginPage'
 
 const APP_VERSION = '0.1.3'
@@ -661,6 +662,8 @@ export default function App() {
         snippetMap={snippetMap}
         onNavigate={handleNavigate}
       />
+
+      <Tooltip />
     </div>
   )
 }
