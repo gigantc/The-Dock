@@ -2,7 +2,7 @@
 @use '../../styles/mixins' as m;
 
 .list {
-  max-width: 720px;
+  max-width: calc(720px + 88px);
   margin: 0 auto;
 }
 
@@ -15,7 +15,7 @@
   position: sticky;
   top: 0;
   z-index: 5;
-  padding: 36px 0 28px 0;
+  padding: 36px 44px 28px;
   background: linear-gradient(180deg, rgba(14, 17, 23, 0.97), rgba(14, 17, 23, 0.88));
   backdrop-filter: blur(4px);
 }
@@ -111,7 +111,7 @@
 .list__items {
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding: 0 44px;
   display: flex;
   flex-direction: column;
   gap: 0;
@@ -261,7 +261,11 @@
   .list__header {
     flex-direction: column;
     gap: 8px;
-    padding-top: 15px;
+    padding: 15px 15px 28px;
+  }
+
+  .list__items {
+    padding: 0 15px;
   }
 
   .list__panel {

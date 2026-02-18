@@ -75,11 +75,10 @@
   -webkit-appearance: none;
   @include m.state-layer;
 
-  @include m.focus-ring;
-
-  &:active {
+  &:focus,
+  &:focus-visible {
     outline: none;
-    box-shadow: var(--ring-soft);
+    box-shadow: none;
   }
 
   &.is-active {
