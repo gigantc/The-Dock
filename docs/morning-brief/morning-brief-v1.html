@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Morning Brief — Template v1</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #11182f;
+      --panel-2: #0d1428;
+      --text: #eef3ff;
+      --muted: #a9b4d6;
+      --line: #2c3b73;
+      --accent: #76a9ff;
+      --good: #7ad7a7;
+      --bad: #ff8a8a;
+      --chip: #1a2448;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 24px;
+      font: 15px/1.5 Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      color: var(--text);
+      background: radial-gradient(1200px 500px at 10% -10%, #1b2a58 0%, transparent 50%),
+                  linear-gradient(180deg, #090f1f 0%, #070b16 100%);
+    }
+
+    .brief {
+      max-width: 980px;
+      margin: 0 auto;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: linear-gradient(180deg, rgba(17,24,47,.94), rgba(13,20,40,.94));
+      padding: 22px;
+      box-shadow: 0 10px 35px rgba(0,0,0,.35);
+    }
+
+    h1 { margin: 0 0 6px; font-size: 30px; line-height: 1.2; }
+    .intro { font-size: 17px; margin: 0 0 6px; }
+    .greeting { color: var(--muted); margin: 0 0 14px; }
+
+    .outline {
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: rgba(8,12,25,.45);
+      margin-bottom: 14px;
+    }
+    .outline strong { margin-right: 6px; }
+    .outline a {
+      color: var(--accent);
+      text-decoration: none;
+      margin-right: 10px;
+      white-space: nowrap;
+    }
+
+    hr {
+      border: none;
+      border-top: 1px solid var(--line);
+      margin: 16px 0;
+    }
+
+    h2 {
+      margin: 0 0 8px;
+      font-size: 20px;
+    }
+
+    .block {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: rgba(8,12,25,.35);
+      padding: 10px 12px;
+      margin: 8px 0;
+    }
+
+    .line { margin: 0 0 4px; }
+    .source { margin: 0; font-size: 13px; color: var(--muted); }
+    .source a { color: var(--accent); text-decoration: none; }
+
+    .kv {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+    @media (max-width: 720px) { .kv { grid-template-columns: 1fr; } }
+
+    .chip {
+      display: inline-block;
+      border: 1px solid var(--line);
+      background: var(--chip);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 3px 10px;
+      font-size: 12px;
+      margin: 4px 6px 0 0;
+    }
+
+    .up { color: var(--good); }
+    .down { color: var(--bad); }
+
+    /* Intentional list styling only for Today I can help with… */
+    .help-list { margin: 8px 0 0 18px; padding: 0; }
+    .help-list li { margin: 6px 0; }
+
+    .outro { margin-top: 10px; font-weight: 500; }
+  </style>
+</head>
+<body>
+  <article class="brief">
+    <h1>Morning Brief — {{DATE}}</h1>
+    <p class="intro">{{INTRO_LINE}}</p>
+    <p class="greeting">{{APOLLO_GREETING}}</p>
+
+    <nav id="outline" class="outline">
+      <strong>Outline:</strong>
+      <a href="#weather">Weather</a>
+      <a href="#markets">Markets</a>
+      <a href="#yesterday-vs-today">Yesterday vs Today</a>
+      <a href="#trending-topics-roundup">Trending Topics</a>
+      <a href="#topic-highlights">Topic Highlights</a>
+      <a href="#today-i-can-help-with">Today I can help with…</a>
+    </nav>
+
+    <hr/>
+    <section id="weather">
+      <h2>Weather (Chandler, AZ)</h2>
+      <div class="block">
+        <p class="line">Today at a glance: 🌡️ Today’s range: High:{{HIGH_F}}° Low:{{LOW_F}}°. {{WEATHER_GLANCE}} 🌅 sunrise: {{SUNRISE}} · 🌇 sunset: {{SUNSET}} · 🧭 pressure: {{PRESSURE_VALUE}} ({{PRESSURE_TREND}})</p>
+        <p class="source">Source: <a href="{{WEATHER_SOURCE_URL}}">{{WEATHER_SOURCE_DOMAIN}}</a></p>
+      </div>
+      <div class="block">
+        <p class="line">Lunar Cycle: {{MOON_PHASE_EMOJI}} {{MOON_PHASE}}, about {{MOON_ILLUMINATION}} illuminated and {{MOON_TREND}} tonight.</p>
+        <p class="line">🌓 Next major phase: {{NEXT_MAJOR_PHASE}}</p>
+        <p class="line">🔭 Moon watch: {{MOON_WATCH_NOTE}}</p>
+        <p class="source">Source: <a href="{{MOON_SOURCE_URL}}">{{MOON_SOURCE_DOMAIN}}</a></p>
+      </div>
+    </section>
+
+    <hr/>
+    <section id="markets">
+      <h2>Markets</h2>
+      <div class="block">
+        <p class="line">S&amp;P 500: {{SP500_VALUE}} ({{SP500_PCT}}, {{SP500_DELTA}}) {{SP500_ARROW}}</p>
+        <p class="source">Source: {{SP500_SOURCE_1}}, {{SP500_SOURCE_2}}</p>
+      </div>
+      <div class="block">
+        <p class="line">Dow: {{DOW_VALUE}} ({{DOW_PCT}}, {{DOW_DELTA}}) {{DOW_ARROW}}</p>
+        <p class="source">Source: {{DOW_SOURCE_1}}, {{DOW_SOURCE_2}}</p>
+      </div>
+      <div class="block">
+        <p class="line">Nasdaq: {{NASDAQ_VALUE}} ({{NASDAQ_PCT}}, {{NASDAQ_DELTA}}) {{NASDAQ_ARROW}}</p>
+        <p class="source">Source: {{NASDAQ_SOURCE_1}}, {{NASDAQ_SOURCE_2}}</p>
+      </div>
+      <div class="block">
+        <p class="line">Bitcoin (BTC): {{BTC_VALUE}} ({{BTC_PCT}}, {{BTC_DELTA}}) {{BTC_ARROW}}</p>
+        <p class="source">Source: {{BTC_SOURCE_1}}, {{BTC_SOURCE_2}}</p>
+      </div>
+      <div class="block">
+        <p class="line">Ethereum (ETH): {{ETH_VALUE}} ({{ETH_PCT}}, {{ETH_DELTA}}) {{ETH_ARROW}}</p>
+        <p class="source">Source: {{ETH_SOURCE_1}}, {{ETH_SOURCE_2}}</p>
+      </div>
+      <div class="block">
+        <p class="line">Market Watch: {{MARKET_WATCH_SUMMARY}} 📈📉</p>
+        <p class="source">Source: {{MARKET_WATCH_SOURCE_1}}, {{MARKET_WATCH_SOURCE_2}}</p>
+      </div>
+    </section>
+
+    <hr/>
+    <section id="yesterday-vs-today">
+      <h2>Yesterday vs Today</h2>
+      <div class="block">
+        <p class="line">{{YVST_1}}</p>
+        <p class="line">{{YVST_2}}</p>
+        <p class="line">{{YVST_3}}</p>
+        <p class="source">Source: {{YVST_SOURCE_1}}, {{YVST_SOURCE_2}}</p>
+      </div>
+    </section>
+
+    <hr/>
+    <section id="trending-topics-roundup">
+      <h2>Trending Topics Roundup</h2>
+      <div class="block">
+        <p class="line"><strong>{{TREND_1_HEAD}}:</strong> {{TREND_1_BODY}}</p>
+        <p class="source">Source: {{TREND_1_SOURCE_1}}, {{TREND_1_SOURCE_2}}</p>
+      </div>
+      <div class="block">
+        <p class="line"><strong>{{TREND_2_HEAD}}:</strong> {{TREND_2_BODY}}</p>
+        <p class="source">Source: {{TREND_2_SOURCE_1}}, {{TREND_2_SOURCE_2}}</p>
+      </div>
+      <div class="block">
+        <p class="line"><strong>{{TREND_3_HEAD}}:</strong> {{TREND_3_BODY}}</p>
+        <p class="source">Source: {{TREND_3_SOURCE_1}}, {{TREND_3_SOURCE_2}}</p>
+      </div>
+      {{TREND_OPTIONAL_BLOCKS_HTML}}
+    </section>
+
+    <hr/>
+    <section id="topic-highlights">
+      <h2>Topic Highlights</h2>
+      <div class="block">
+        <p class="line"><strong>{{HIGHLIGHT_1_HEAD}}:</strong> {{HIGHLIGHT_1_BODY}}</p>
+        <p class="source">Source: {{HIGHLIGHT_1_SOURCE_1}}, {{HIGHLIGHT_1_SOURCE_2}}</p>
+      </div>
+      <div class="block">
+        <p class="line"><strong>{{HIGHLIGHT_2_HEAD}}:</strong> {{HIGHLIGHT_2_BODY}}</p>
+        <p class="source">Source: {{HIGHLIGHT_2_SOURCE_1}}, {{HIGHLIGHT_2_SOURCE_2}}</p>
+      </div>
+      <div class="block">
+        <p class="line"><strong>{{APOLLO_PICK_1_HEAD}}:</strong> {{APOLLO_PICK_1_BODY}}</p>
+        <p class="source">Source: {{APOLLO_PICK_1_SOURCE_1}}, {{APOLLO_PICK_1_SOURCE_2}}</p>
+      </div>
+      {{HIGHLIGHTS_OPTIONAL_BLOCKS_HTML}}
+      <div>
+        <span class="chip">packers</span>
+        <span class="chip">ai</span>
+        <span class="chip">markets</span>
+        <span class="chip">weather</span>
+        <span class="chip">dev</span>
+      </div>
+    </section>
+
+    <hr/>
+    <section id="today-i-can-help-with">
+      <h2>Today I can help with…</h2>
+      <ul class="help-list">
+        <li>{{HELP_1}}</li>
+        <li>{{HELP_2}}</li>
+        <li>{{HELP_3}}</li>
+      </ul>
+    </section>
+
+    <hr/>
+    <p class="outro">{{APOLLO_OUTRO}}</p>
+  </article>
+</body>
+</html>
