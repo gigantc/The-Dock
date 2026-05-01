@@ -95,6 +95,7 @@ export default function App() {
   const [locations, setLocations] = useState(() => loadLocations())
   const [locationId, setLocationId] = useState(() => localStorage.getItem('dock.location') || DEFAULT_LOCATION_ID)
   const [autoEditDocId, setAutoEditDocId] = useState(null)
+  const [isPanelOpen, setIsPanelOpen] = useState(false)
   const appRef = useRef(null)
   const briefsPrunedRef = useRef(false)
 
@@ -745,6 +746,7 @@ export default function App() {
     setActivePath(path)
     setActiveListId(null)
     setActiveEntryId(null)
+    setIsPanelOpen(false)
     const docItem = docs.find((d) => d.path === path)
     if (docItem) setView(viewForDoc(docItem))
   }, [docs, viewForDoc])
@@ -754,6 +756,7 @@ export default function App() {
     setActiveListId(id)
     setActivePath(null)
     setActiveEntryId(null)
+    setIsPanelOpen(false)
     setView('lists')
   }, [])
 
@@ -762,6 +765,7 @@ export default function App() {
     setActiveEntryId(entryId)
     setActivePath(null)
     setActiveListId(null)
+    setIsPanelOpen(false)
     setView('journals')
   }, [])
 
@@ -771,6 +775,7 @@ export default function App() {
     setActiveListId(null)
     setActiveEntryId(null)
     setAutoEditDocId(null)
+    setIsPanelOpen(true)
   }, [])
 
   const appLoading = !authReady || (user && (!docsReady || !listsReady || !journalsReady || !entriesReady))
@@ -839,13 +844,20 @@ export default function App() {
       <Sidebar
         view={view}
         onViewChange={handleViewChange}
+        onTogglePanel={() => setIsPanelOpen((p) => !p)}
         onNewEntry={() => setShowNewEntry(true)}
         onOpenSettings={() => setShowSettings(true)}
         sidebarMode={isArchive ? 'rail' : 'full'}
       />
 
+      {isArchive && isPanelOpen && (
+        <div className="panel-backdrop" onClick={() => setIsPanelOpen(false)} aria-hidden="true" />
+      )}
+
       {isArchive && (
         <SelectionPanel
+          isOpen={isPanelOpen}
+          onClose={() => setIsPanelOpen(false)}
           type={view}
           docs={docs}
           lists={firestoreLists}

@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { BookOpen, ChevronDown, ChevronRight, FolderOpen, ListTodo, Newspaper, Pencil, Plus, Search, StickyNote, Trash2 } from 'lucide-react'
+import { BookOpen, ChevronDown, ChevronRight, FolderOpen, ListTodo, Newspaper, Pencil, Plus, Search, StickyNote, Trash2, X } from 'lucide-react'
 import './SelectionPanel.scss'
 
 const TYPE_META = {
@@ -15,6 +15,8 @@ function matchEntry(entry, q) {
 }
 
 export default function SelectionPanel({
+  isOpen = false,
+  onClose,
   type,
   docs = [],
   lists = [],
@@ -152,12 +154,17 @@ export default function SelectionPanel({
   const TypeIcon = meta.Icon
 
   return (
-    <aside className="panel">
+    <aside className={`panel${isOpen ? ' panel--open' : ''}`}>
       <div className="panel__head">
         <h2 className="panel__title">{meta.label}</h2>
-        <button type="button" className="panel__new" onClick={onNew} aria-label="Create new">
-          <Plus size={16} strokeWidth={2.5} aria-hidden="true" />
-        </button>
+        <div className="panel__head-actions">
+          <button type="button" className="panel__new" onClick={onNew} aria-label="Create new">
+            <Plus size={16} strokeWidth={2.5} aria-hidden="true" />
+          </button>
+          <button type="button" className="panel__close" onClick={onClose} aria-label="Close panel">
+            <X size={16} strokeWidth={2} aria-hidden="true" />
+          </button>
+        </div>
       </div>
 
       <div className="panel__search">

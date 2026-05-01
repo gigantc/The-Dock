@@ -13,6 +13,7 @@ const NAV_ITEMS = [
 function Sidebar({
   view,
   onViewChange,
+  onTogglePanel,
   onNewEntry,
   onOpenSettings,
   sidebarMode = 'full', // 'full' | 'rail'
@@ -24,12 +25,16 @@ function Sidebar({
       <nav className="sidebar__nav">
         {NAV_ITEMS.map((item) => {
           const isActive = view === item.id
+          const handleClick = () => {
+            if (isActive && isRail) onTogglePanel?.()
+            else onViewChange?.(item.id)
+          }
           return (
             <button
               key={item.id}
               type="button"
               className={`sidebar__nav-item ${isActive ? 'is-active' : ''}`}
-              onClick={() => onViewChange?.(item.id)}
+              onClick={handleClick}
              
               aria-label={item.label}
               aria-current={isActive ? 'page' : undefined}

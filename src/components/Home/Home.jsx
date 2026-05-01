@@ -131,7 +131,7 @@ export default function Home({
               {featuredBrief.briefData?.intro || buildSnippet(featuredBrief.content, featuredBrief.title, 260) || textFromDoc(featuredBrief)}
             </p>
             <span className="home__featured-cta">
-              Read Full Analysis
+              Read Today's Brief
               <ArrowRight size={16} strokeWidth={2.5} aria-hidden="true" />
             </span>
             <span className="home__featured-glow" aria-hidden="true" />
@@ -150,11 +150,53 @@ export default function Home({
           </div>
         )}
 
-        {/* Quick Metrics — empty shell */}
-        <aside className="home__metrics">
-          <h4 className="home__metrics-label">Quick Metrics</h4>
-          <div className="home__metrics-body" aria-hidden="true" />
-        </aside>
+        {/* Brief preview aside */}
+        {featuredBrief?.briefData && (() => {
+          const brief = featuredBrief.briefData
+          const stories = [
+            ...(brief.highlights || []),
+            ...(brief.trends || []),
+          ].slice(0, 2)
+          return (
+            <button
+              type="button"
+              className="home__brief-aside"
+              onClick={() => onSelectDoc?.(featuredBrief.path)}
+            >
+              <p className="home__brief-aside-label">From Today&apos;s Brief</p>
+
+              {(brief.moon?.phase || brief.moon?.phaseEmoji) && (
+                <div className="home__brief-moon">
+                  {brief.moon.phaseEmoji && (
+                    <span className="home__brief-moon-glyph">{brief.moon.phaseEmoji}</span>
+                  )}
+                  <div className="home__brief-moon-copy">
+                    <span className="home__brief-moon-phase">{brief.moon.phase || 'Lunar Cycle'}</span>
+                    {brief.moon.illumination && (
+                      <span className="home__brief-moon-illum">{brief.moon.illumination} illuminated</span>
+                    )}
+                    {brief.moon.nextMajorPhase && (
+                      <span className="home__brief-moon-next">Next: {brief.moon.nextMajorPhase}</span>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {stories.length > 0 && (
+                <div className="home__brief-stories">
+                  {stories.map((story, i) => (
+                    <div key={i} className="home__brief-story">
+                      <p className="home__brief-story-head">{story.headline}</p>
+                      {story.body && (
+                        <p className="home__brief-story-body">{story.body}</p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </button>
+          )
+        })()}
       </div>
 
       {/* Bento grid */}

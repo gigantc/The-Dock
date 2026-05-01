@@ -103,6 +103,33 @@
   }
 }
 
+@media (max-width: 767px) {
+  .app {
+    --sidebar-width: 64px;
+  }
+
+  .app--archive {
+    grid-template-columns: var(--rail-width) 1fr;
+    grid-template-areas:
+      'header header'
+      'sidebar viewer';
+  }
+}
+
+.panel-backdrop {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .panel-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(#000, 0.55);
+    z-index: 40;
+  }
+}
+
 .archive-empty {
   grid-area: viewer;
   display: flex;

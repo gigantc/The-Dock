@@ -2,7 +2,7 @@ import { Trash2 } from 'lucide-react'
 import './MorningBriefView.scss'
 import { getMorningBriefIcon } from '../../utils/morningBriefIcons'
 
-function SourceLine({ sources = [] }) {
+function SourceLine({ sources = [], linked = true }) {
   if (!sources.length) return null
 
   return (
@@ -11,9 +11,9 @@ function SourceLine({ sources = [] }) {
       {sources.map((source, index) => (
         <span key={`${source.label}-${source.url || index}`}>
           {index > 0 ? ', ' : ''}
-          {source.url ? (
-            <a href={source.url} target="_blank" rel="noreferrer">{source.label}</a>
-          ) : source.label}
+          {linked && source.url
+            ? <a href={source.url} target="_blank" rel="noreferrer">{source.label}</a>
+            : <span className="brief-template__source-name">{source.label}</span>}
         </span>
       ))}
     </p>
@@ -37,6 +37,20 @@ function InstrumentCard({ item }) {
 
 function TrendCard({ item }) {
   const Icon = getMorningBriefIcon(item.icon)
+  const url = item.sources?.[0]?.url
+
+  if (url) {
+    return (
+      <a href={url} target="_blank" rel="noreferrer" className="brief-template__trend-card">
+        <div className="brief-template__trend-icon">
+          <Icon size={20} strokeWidth={2} aria-hidden="true" />
+        </div>
+        <h3 className="brief-template__trend-head">{item.headline || 'Signal'}</h3>
+        <p className="brief-template__trend-body">{item.body}</p>
+        <SourceLine sources={item.sources} linked={false} />
+      </a>
+    )
+  }
 
   return (
     <article className="brief-template__trend-card">
@@ -51,10 +65,17 @@ function TrendCard({ item }) {
 }
 
 function HighlightCard({ item }) {
+  const url = item.sources?.[0]?.url
+  const headline = item.headline || 'Untitled'
+
   return (
     <article className="brief-template__highlight">
       <p className="brief-template__highlight-kicker">{item.topic || (item.kind === 'apollo-pick' ? 'Apollo Pick' : 'Signal')}</p>
-      <h3 className="brief-template__highlight-title">{item.headline || 'Untitled'}</h3>
+      <h3 className="brief-template__highlight-title">
+        {url
+          ? <a href={url} target="_blank" rel="noreferrer">{headline}</a>
+          : headline}
+      </h3>
       <p className="brief-template__highlight-body">{item.body}</p>
       <SourceLine sources={item.sources} />
     </article>
